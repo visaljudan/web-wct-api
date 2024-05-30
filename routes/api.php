@@ -5,7 +5,6 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\GenreController;
 use App\Http\Controllers\API\LanguageController;
-use App\Http\Controllers\API\MediaTypeController;
 use App\Http\Controllers\API\MovieArtistController;
 use App\Http\Controllers\API\MovieController;
 use App\Http\Controllers\API\MovieCountryController;
@@ -21,6 +20,7 @@ use App\Http\Controllers\API\RequestedMovieResponseController;
 use App\Http\Controllers\API\RoleController;
 use App\Http\Controllers\API\SavedMovieController;
 use App\Http\Controllers\API\SubscriptionPlanController;
+use App\Http\Controllers\API\TVShowController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +32,7 @@ Route::get('/user', function (Request $request) {
 
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
-    Route::post('/signouts', [AuthController::class, 'signout']);
+    Route::post('/signout', [AuthController::class, 'signout']);
 
     //User
     Route::put('/users/{id}', [UserController::class, 'update']);
@@ -147,9 +147,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('/subscription-plans/{id}', [SubscriptionPlanController::class, 'destroy']);
 
     //TV Show
-    Route::post('/media_types', [MediaTypeController::class, 'store']);
-    Route::put('/media_types/{id}', [MediaTypeController::class, 'update']);
-    Route::delete('/media_types/{id}', [MediaTypeController::class, 'destroy']);
+    Route::post('/tv_shows', [TVShowController::class, 'store']);
+    Route::put('/tv_shows/{id}', [TVShowController::class, 'update']);
+    Route::delete('/tv_shows/{id}', [TVShowController::class, 'destroy']);
 });
 
 Route::middleware('api')->group(function () {
@@ -203,8 +203,8 @@ Route::middleware('api')->group(function () {
     Route::get('/movie_artists/{id}', [MovieArtistController::class, 'show']);
 
     //TV-Show Type      
-    Route::get('/media_types', [MediaTypeController::class, 'index']);
-    Route::get('/media_types/{id}', [MediaTypeController::class, 'show']);
+    Route::get('/tv_shows', [TVShowController::class, 'index']);
+    Route::get('/tv_shows/{id}', [TVShowController::class, 'show']);
 
     //Movie Series
     Route::get('movie_series', [MovieSerieController::class, 'index']);

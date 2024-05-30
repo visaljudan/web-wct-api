@@ -94,4 +94,11 @@ class UserController extends MainController
         $user->delete();
         return $this->sendSuccess(200, 'User deleted successfully');
     }
+
+    public function countUser($role)
+    {
+        $totalUsers = User::where('role', $role)->count();
+
+        return $this->sendSuccess(200, "Total $role: $totalUsers");
+    }
 }

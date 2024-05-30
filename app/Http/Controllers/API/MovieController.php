@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Movie;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -59,6 +60,8 @@ class MovieController extends Controller
         }
 
         $movie = Movie::create($request->all());
+
+        $this->notifyNewMovie($movie);
 
         return response()->json([
             'success' => true,
@@ -162,5 +165,131 @@ class MovieController extends Controller
             'statusCode' => 200,
             'message' => 'Movie deleted successfully',
         ], 200);
+    }
+
+    public function latest()
+    {
+        $latestMovies = Movie::orderBy('release_date', 'desc')->get();
+
+        if ($latestMovies->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'statusCode' => 404,
+                'message' => 'No latest movies found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'statusCode' => 200,
+            'latest_movies' => $latestMovies,
+        ], 200);
+    }
+
+    public function popular()
+    {
+        $popularMovies = Movie::orderBy('popularity', 'desc')->get();
+
+        if ($popularMovies->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'statusCode' => 404,
+                'message' => 'No popular movies found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'statusCode' => 200,
+            'popular_movies' => $popularMovies,
+        ], 200);
+    }
+
+    public function related($id)
+    {
+        $movie = Movie::find($id);
+
+        if (!$movie) {
+            return response()->json([
+                'success' => false,
+                'statusCode' => 404,
+                'message' => 'Movie not found',
+            ], 404);
+        }
+
+        // Example: Get related movies with the same genre
+        $relatedMovies = Movie::where('genre', $movie->genre)
+            ->where('id', '!=', $id) // Exclude the current movie
+            ->take(5) // Limit the number of related movies
+            ->get();
+
+        if ($relatedMovies->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'statusCode' => 404,
+                'message' => 'No related movies found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'statusCode' => 200,
+            'related_movies' => $relatedMovies,
+        ], 200);
+    }
+
+    public function suggestMovies(Request $request)
+    {
+        $request->validate([
+            'type' => 'required|string|in:popular,genre',
+            'value' => 'required|string', // You might need to validate this based on the 'type'
+        ]);
+
+        $type = $request->input('type');
+        $value = $request->input('value');
+
+        if ($type === 'popular') {
+            // Example: Get popular movies
+            $suggestedMovies = Movie::orderBy('popularity', 'desc')
+                ->take(5) // Limit the number of suggested movies
+                ->get();
+        } elseif ($type === 'genre') {
+            // Example: Get movies with the same genre
+            $suggestedMovies = Movie::where('genre', $value)
+                ->orderBy('popularity', 'desc')
+                ->take(5) // Limit the number of suggested movies
+                ->get();
+        } else {
+            return response()->json([
+                'success' => false,
+                'statusCode' => 400,
+                'message' => 'Invalid suggestion type',
+            ], 400);
+        }
+
+        if ($suggestedMovies->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'statusCode' => 404,
+                'message' => 'No suggested movies found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'statusCode' => 200,
+            'suggested_movies' => $suggestedMovies,
+        ], 200);
+    }
+    protected function notifyNewMovie($movie)
+    {
+        $subscribedUsers = User::where('subscribed', true)
+            ->where('preferred_genre', $movie->genre)
+            ->get();
+
+        foreach ($subscribedUsers as $user) {
+            // Send notification to each user   
+            // $user->notify(new NewMovieNotification($movie));
+        }
     }
 }

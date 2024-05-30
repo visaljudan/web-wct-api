@@ -17,6 +17,7 @@ class Movie extends Model
         'total_likes',
         'total_ratings',
         'average_rating',
+        'popularity',
         'poster_image',
         'cover_image',
         'trailer_url',
