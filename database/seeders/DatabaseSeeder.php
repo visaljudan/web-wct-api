@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,14 +10,23 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-        ]);
-
-        $this->call([
-            MovieSeeder::class,
-        ]);
-
-        $this->call([
+            SubscriptionPlanSeeder::class,
             TVShowSeeder::class,
+            GenreSeeder::class,
+            MovieSeeder::class,
+            ArtistSeeder::class,
+            RoleSeeder::class,
+            CountrySeeder::class,
+            LanguageSeeder::class,
+            MovieArtistSeeder::class,
+            MovieCountrySeeder::class,
+            MovieLanguageSeeder::class,
+            MovieGenreSeeder::class,
+            MoviePhotoSeeder::class,
+            MovieSeriesSeeder::class,
+            RatedMovieSeeder::class,
+            SavedMovieSeeder::class,
+            SubscriptionUserSeeder::class,
         ]);
     }
 }
