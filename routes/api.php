@@ -165,6 +165,10 @@ Route::middleware('api')->group(function () {
     //Auth
     Route::post('/signup', [AuthController::class, 'signup']);
     Route::post('/signin', [AuthController::class, 'signin']);
+    // Route for handling Google callback for Firebase authentication
+    Route::post('/google', [AuthController::class, 'google']);
+
+
 
     //Roles
     Route::get('/roles', [RoleController::class, 'index']);

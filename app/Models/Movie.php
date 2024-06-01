@@ -17,19 +17,21 @@ class Movie extends Model
         'total_likes',
         'total_ratings',
         'average_rating',
+        'trailer_url',
         'popularity',
         'poster_image',
         'cover_image',
-        'trailer_url',
+        'terms_status',
+        'upload_status',
         'last_upload_date',
-        'subscription_only',
-        'expired_subscription_only',
+        'user_subscription',
+        'expire_subscription',
     ];
 
     protected $casts = [
         'release_date' => 'date',
         'last_upload_date' => 'datetime',
-        'subscription_only' => 'boolean',
-        'expired_subscription_only' => 'date',
+        'user_subscription' => 'boolean',
+        'expire_subscription' => 'date',
     ];
 }
