@@ -49,17 +49,18 @@ class MovieGenreController extends MainController
     }
 
     //show
-    public function show($id)
+    public function show($movieId)
     {
-        $movieGenre = MovieGenre::find($id);
+        $movieGenres = MovieGenre::where('movie_id', $movieId)->get();
 
-        if (!$movieGenre) {
-            return $this->sendSuccess(404, 'Movie genre not found');
+        if ($movieGenres->isEmpty()) {
+            return $this->sendSuccess(404, 'Movie genres not found');
         }
 
-        $res = new MovieGenreResource($movieGenre);
-        return $this->sendSuccess(200, 'Movie Gernes Found', $res);
+        $res = new MovieGenreResourceCollection($movieGenres);
+        return $this->sendSuccess(200, 'Movie Genres Found', $res);
     }
+
 
     //Update
     public function update(Request $request, $id)

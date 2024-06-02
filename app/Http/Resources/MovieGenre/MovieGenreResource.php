@@ -16,7 +16,8 @@ class MovieGenreResource extends JsonResource
     {
         return [
             'movie_id' => $this->movie_id,
-            'genre_id' => $this->genre_id
+            'genre_id' => $this->genre_id,
+            'genre_name' => $this->genre->genre_name,
         ];
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\MainController;
+use App\Http\Resources\Movie\MovieResource;
 use App\Models\Movie;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class MovieController extends Controller
+class MovieController extends MainController
 {
     public function index()
     {
@@ -79,18 +80,11 @@ class MovieController extends Controller
         $movie = Movie::find($id);
 
         if (!$movie) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Movie not found',
-            ], 404);
+            return $this->sendError(404, "Movie not found");
         }
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'movie' => $movie
-        ], 200);
+        $res = new MovieResource($movie);
+        return $this->sendSuccess(200, "Movie have found", $res);
     }
 
     /**

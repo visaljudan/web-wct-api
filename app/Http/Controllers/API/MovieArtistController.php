@@ -6,6 +6,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Resources\MovieArtist\MovieArtistResource;
 use App\Http\Resources\MovieArtist\MovieArtistResourceCollection;
 use App\Models\MovieArtist;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -51,15 +52,15 @@ class MovieArtistController extends MainController
     }
 
     // Show
-    public function show($id)
+    public function show($movieId)
     {
-        $movieArtist = MovieArtist::find($id);
+        $movieArtist = MovieArtist::where('movie_id', $movieId)->get();
 
         if (!$movieArtist) {
             return $this->sendError(404, 'Movie artist not found');
         }
 
-        $res = new MovieArtistResource($movieArtist);
+        $res = new MovieArtistResourceCollection($movieArtist);
         return $this->sendSuccess(200, 'Movie Artist found', $res);
     }
 
@@ -108,5 +109,23 @@ class MovieArtistController extends MainController
 
         $movieArtist->delete();
         return $this->sendSuccess(200, 'Movie artist deleted successfully');
+    }
+
+    public function director($movieId)
+    {
+        // Fetch the role ID for the role with the name "Director"
+        $directorRoleId = Role::where('role_name', 'Director')->value('id');
+
+        // Fetch movie artists where role_id matches the director role ID
+        $movieArtists = MovieArtist::where('movie_id', $movieId)
+            ->where('role_id', $directorRoleId)
+            ->get();
+
+        if ($movieArtists->isEmpty()) {
+            return $this->sendSuccess(404, 'Movie artists not found');
+        }
+
+        $res = new MovieArtistResourceCollection($movieArtists);
+        return $this->sendSuccess(200, 'Movie Artists Found', $res);
     }
 }

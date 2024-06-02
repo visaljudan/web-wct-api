@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             MovieSeeder::class,
             ArtistSeeder::class,
             RoleSeeder::class,
+            YearSeeder::class,
             CountrySeeder::class,
             LanguageSeeder::class,
             MovieArtistSeeder::class,

@@ -21,6 +21,6 @@ class MovieCountry extends Model
 
     public function country()
     {
-        return $this->belongsTo(Country::class, 'country_code', 'country_code');
+        return $this->belongsTo(Country::class);
     }
 }

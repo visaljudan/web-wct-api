@@ -10,6 +10,7 @@ use App\Http\Controllers\API\MovieController;
 use App\Http\Controllers\API\MovieCountryController;
 use App\Http\Controllers\API\MovieGenreController;
 use App\Http\Controllers\API\MovieLanguageController;
+use App\Http\Controllers\API\MoviePhotoController;
 use App\Http\Controllers\API\MovieSerieController;
 use App\Http\Controllers\API\MovieSubscriptionController;
 use App\Http\Controllers\API\MovieVideoController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\API\SavedMovieController;
 use App\Http\Controllers\API\SubscriptionPlanController;
 use App\Http\Controllers\API\TVShowController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\YearController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -168,8 +170,6 @@ Route::middleware('api')->group(function () {
     // Route for handling Google callback for Firebase authentication
     Route::post('/google', [AuthController::class, 'google']);
 
-
-
     //Roles
     Route::get('/roles', [RoleController::class, 'index']);
     Route::get('/roles/{id}', [RoleController::class, 'show']);
@@ -192,11 +192,11 @@ Route::middleware('api')->group(function () {
 
     //Movie Genres
     Route::get('/movie_genres', [MovieGenreController::class, 'index']);
-    Route::get('/movie_genres/{id}', [MovieGenreController::class, 'show']);
+    Route::get('/movie_genres/{movieId}', [MovieGenreController::class, 'show']);
 
     //Movie Countries
     Route::get('/movie_countries', [MovieCountryController::class, 'index']);
-    Route::get('/movie_countries/{id}', [MovieCountryController::class, 'show']);
+    Route::get('/movie_countries/{movieId}', [MovieCountryController::class, 'show']);
 
     //Movie Languages
     Route::get('/movie_languages', [MovieLanguageController::class, 'index']);
@@ -204,7 +204,8 @@ Route::middleware('api')->group(function () {
 
     //Movie Artists
     Route::get('/movie_artists', [MovieArtistController::class, 'index']);
-    Route::get('/movie_artists/{id}', [MovieArtistController::class, 'show']);
+    Route::get('/movie_artists/{movieId}', [MovieArtistController::class, 'show']);
+    Route::get('/movie_artists/{movieId}/director', [MovieArtistController::class, 'director']);
 
     //TV-Show Type      
     Route::get('/tv_shows', [TVShowController::class, 'index']);
@@ -215,6 +216,12 @@ Route::middleware('api')->group(function () {
     Route::get('movie_series/{id}', [MovieSerieController::class, 'show']);
 
     //Movie Videos
-    Route::get('movie-videos', [MovieVideoController::class, 'index']);
-    Route::get('movie-videos/{id}', [MovieVideoController::class, 'show']);
+    Route::get('movie_videos', [MovieVideoController::class, 'index']);
+    Route::get('movie_videos/{id}', [MovieVideoController::class, 'show']);
+
+    //Movie Photos
+    Route::get('movie_photos/{id}', [MoviePhotoController::class, 'show']);
+
+    //Years
+    Route::get('years', [YearController::class, 'index']);
 });

@@ -11,10 +11,76 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
 use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Info(
+ *     version="1.0.0",
+ *     title="Swagger API Documentation",
+ *     description="Swagger API documentation for Laravel application"
+ * )
+ */
+
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     title="User",    
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="name", type="string", example="John Doe"),
+ *     @OA\Property(property="email", type="string", example="johndoe@example.com"),
+ *     @OA\Property(property="role", type="string", example="User")
+ * )
+ */
+
 class UserController extends MainController
 {
-
-    //Index
+    /**
+     * @OA\Get(
+     *     path="/api/users",
+     *     operationId="getUsersList",
+     *     tags={"Users"},
+     *     summary="Get list of users",
+     *     description="Returns list of users excluding Admins",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=200
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="User found"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="array",
+     *                 @OA\Items(ref="#/components/schemas/User")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="No Record Found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=400
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="No Record Found"
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function index()
     {
         $users = User::all();
@@ -24,7 +90,6 @@ class UserController extends MainController
         });
 
         if ($user->count() > 0) {
-
             $res = new UserResourceCollection($user);
             return $this->sendSuccess(200, 'User found', $res);
         } else {
@@ -32,11 +97,63 @@ class UserController extends MainController
         }
     }
 
-
-    //Show
+    /**
+     * @OA\Get(
+     *     path="/api/users/{id}",
+     *     operationId="getUserById",
+     *     tags={"Users"},
+     *     summary="Get user by ID",
+     *     description="Returns a user based on ID",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=200
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="User found"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/User"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="No Record Found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=404
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="No Record Found"
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function show($id)
     {
-
         $user = User::find($id);
 
         if (!$user || $user->role == 'Admin') {
@@ -47,7 +164,98 @@ class UserController extends MainController
         return $this->sendSuccess(200, 'User found', $res);
     }
 
-    //Update
+    /**
+     * @OA\Put(
+     *     path="/api/users/{id}",
+     *     operationId="updateUser",
+     *     tags={"Users"},
+     *     summary="Update user",
+     *     description="Updates a user based on ID",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="username",
+     *                 type="string",
+     *                 example="newusername"
+     *             ),
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 example="newemail@example.com"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=200
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="User updated successfully"
+     *             ),
+     *             @OA\Property(
+     *                 property="data",
+     *                 ref="#/components/schemas/User"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=404
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="User not found"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation failed",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=422
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Validation failed"
+     *             ),
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object"
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function update(Request $request, $id)
     {
         $user = User::find($id);
@@ -78,7 +286,74 @@ class UserController extends MainController
         return $this->sendSuccess(200, 'User updated successfully', $res);
     }
 
-    //Destroy
+    /**
+     * @OA\Delete(
+     *     path="/api/users/{id}",
+     *     operationId="deleteUser",
+     *     tags={"Users"},
+     *     summary="Delete user",
+     *     description="Deletes a user based on ID",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="User deleted successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=200
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="User deleted successfully"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="You are not allowed",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=403
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="You are not allowed"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="User not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=404
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="User not found"
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function destroy($id)
     {
         $user = User::find($id);
@@ -95,6 +370,40 @@ class UserController extends MainController
         return $this->sendSuccess(200, 'User deleted successfully');
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/users/count/{role}",
+     *     operationId="countUsersByRole",
+     *     tags={"Users"},
+     *     summary="Count users by role",
+     *     description="Returns the total number of users with a specific role",
+     *     @OA\Parameter(
+     *         name="role",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Total users counted",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="status",
+     *                 type="integer",
+     *                 example=200
+     *             ),
+     *             @OA\Property(
+     *                 property="message",
+     *                 type="string",
+     *                 example="Total {role}: {total}"
+     *             )
+     *         )
+     *     )
+     * )
+     */
     public function countUser($role)
     {
         $totalUsers = User::where('role', $role)->count();

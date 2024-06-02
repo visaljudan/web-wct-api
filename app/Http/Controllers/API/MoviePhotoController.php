@@ -2,31 +2,23 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\MainController;
+use App\Http\Resources\MoviePhoto\MoviePhotoResource;
+use App\Http\Resources\MoviePhoto\MoviePhotoResourceCollection;
 use App\Models\MoviePhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class MoviePhotoController extends Controller
+class MoviePhotoController extends MainController
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $moviePhotos = MoviePhoto::all();
         if ($moviePhotos->count() > 0) {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 200,
-                'moviePhotos' => $moviePhotos
-            ], 200);
+            $res = new MoviePhotoResourceCollection($moviePhotos);
+            return $this->sendSuccess(200, 'Movie found', $res);
         } else {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 400,
-                'message' => 'No Record Found'
-            ], 400);
+            return $this->sendError(400, 'No Record Found');
         }
     }
 
@@ -41,13 +33,9 @@ class MoviePhotoController extends Controller
             'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Example: Allow only image files with max size 2048 KB
         ]);
 
+
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
         $photoPath = $request->file('photo')->store('photos');
@@ -57,36 +45,24 @@ class MoviePhotoController extends Controller
             'photo_path' => $photoPath,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 201,
-            'message' => 'Movie photo uploaded successfully',
-            'moviePhoto' => $moviePhoto,
-        ], 201);
+        $res = new MoviePhotoResource($moviePhoto);
+        return $this->sendSuccess(201, 'Movie photo uploaded successfully', $res);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($movieId)
     {
-        $moviePhoto = MoviePhoto::find($id);
+        $moviePhoto = MoviePhoto::where('movie_id', $movieId)->get();
 
         if (!$moviePhoto) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Movie photo not found',
-            ], 404);
+            return $this->sendError(404, 'Movie photo not found');
         }
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'moviePhoto' => $moviePhoto,
-        ], 200);
+        $res = new MoviePhotoResourceCollection(($moviePhoto));
+        return $this->sendSuccess(200, 'Movie photo not found', $res);
     }
-
     /**
      * Update the specified resource in storage.
      */

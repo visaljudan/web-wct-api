@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Resources\Country;
+namespace App\Http\Resources\Year;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CountryResource extends JsonResource
+class YearResource extends JsonResource
 {
+
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            'country_code' => $this->country_code,
-            'country_name' => $this->country_name
+            'year' => $this->year,
         ];
     }
 }

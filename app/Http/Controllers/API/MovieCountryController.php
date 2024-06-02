@@ -49,16 +49,18 @@ class MovieCountryController extends MainController
     }
 
     // Show
-    public function show($id)
+    public function show($movieId)
     {
-        $movieCountry = MovieCountry::find($id);
+        $movieCountries = MovieCountry::where('movie_id', $movieId)->get();
 
-        if (!$movieCountry) {
-            return $this->sendError(404, 'Movie country not found');
+        if (!$movieCountries) {
+            return $this->sendError(404, 'Movie countries not found');
         }
 
-        $res = new MovieCountryResource($movieCountry);
-        return $this->sendSuccess(200, 'Movie Country found', $res);
+        // Assuming you have a MovieCountryResourceCollection class to transform the data
+        $res = new MovieCountryResourceCollection($movieCountries);
+
+        return $this->sendSuccess(200, 'Movie Countries Found', $res);
     }
 
     // Update

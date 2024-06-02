@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Resources\Country;
+namespace App\Http\Resources\MoviePhoto;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CountryResource extends JsonResource
+class MoviePhotoResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            'country_code' => $this->country_code,
-            'country_name' => $this->country_name
+            'movie_id' => $this->movie_id,
+            'photo_path' => $this->photo_path,
         ];
     }
 }

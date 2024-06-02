@@ -5,17 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MovieGenre extends Model
+class Year extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'movie_id',
-        'genre_id',
+        'year'
     ];
-
-    public function genre()
-    {
-        return $this->belongsTo(Genre::class, 'genre_id');
-    }
 }
