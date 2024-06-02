@@ -11,9 +11,22 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
+
 class ArtistController extends MainController
 {
-    //Index
+    /**
+ * @OA\Get(
+ *     path="/api/artists",
+ *     tags={"Artists"},
+ *     summary="Get List Artists Data",
+ *     description="enter your Artists here",
+ *     operationId="Artists",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model Artists"
+ *     )
+ * )
+ */
     public function index()
     {
         $artists = Artist::all();
@@ -24,7 +37,28 @@ class ArtistController extends MainController
             return $this->sendSuccess(400, 'No Record Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/artists",
+ *     tags={"Artists"},
+ *     summary="artists",
+ *     description="-",
+ *     operationId="artists",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form artists",
+ *          @OA\JsonContent(
+ *            required={"artist_name", "artist_profile"},
+ *              @OA\Property(property="artist_name", type="string"),
+ *              @OA\Property(property="artist_profile", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *     )
+ * )
+ */
     //Stroe
     public function store(Request $request)
     {
@@ -51,7 +85,28 @@ class ArtistController extends MainController
         $res = new ArtistResource($artist);
         return $this->sendSuccess(200, 'Artist created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/artist/{id}",
+     *     tags={"Artists"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="artist/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     //Show
     public function show($id)
     {
@@ -64,7 +119,37 @@ class ArtistController extends MainController
         $res = new ArtistResource($artist);
         return $this->sendSuccess(200, 'Artist Found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/artist/{id}",
+     *     tags={"Artists"},
+     *     summary="Update artist",
+     *     description="-",
+     *     operationId="artist/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"artist_name", "artist_profile"},
+ *              @OA\Property(property="artist_name", type="string"),
+ *              @OA\Property(property="artist_profile", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     //Update
     public function update(Request $request, $id)
     {
@@ -95,7 +180,28 @@ class ArtistController extends MainController
         $res = new ArtistResource($artist);
         return $this->sendSuccess(200, 'Artist updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/artist/{id}",
+     *     tags={"Artists"},
+     *     summary="Delete artist",
+     *     description="-",
+     *     operationId="artist/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     //Destroy
     public function destroy(string $id)
     {

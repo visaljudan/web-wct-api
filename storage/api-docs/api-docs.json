@@ -1,18 +1,242 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Let's Watch API by Visal Judan (only)",
-        "description": "Ah menh hz ah vith ot ban jouy tver teh",
+        "title": "API Documentation ",
+        "description": "API Documentation",
         "contact": {
-            "email": "visal.nls2003@gmail.com"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
+            "email": "srundavith@gmail.com"
         },
         "version": "1.0.0"
     },
     "paths": {
+        "/api/artists": {
+            "get": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Get List Artists Data",
+                "description": "enter your Artists here",
+                "operationId": "Artists",
+                "responses": {
+                    "default": {
+                        "description": "return array model Artists"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "artists",
+                "description": "-",
+                "operationId": "artists",
+                "requestBody": {
+                    "description": "form artists",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "artist_name",
+                                    "artist_profile"
+                                ],
+                                "properties": {
+                                    "artist_name": {
+                                        "type": "string"
+                                    },
+                                    "artist_profile": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/artist/{id}": {
+            "get": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "artist/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Update artist",
+                "description": "-",
+                "operationId": "artist/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "artist_name",
+                                    "artist_profile"
+                                ],
+                                "properties": {
+                                    "artist_name": {
+                                        "type": "string"
+                                    },
+                                    "artist_profile": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Delete artist",
+                "description": "-",
+                "operationId": "artist/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/signup": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "signup",
+                "description": "-",
+                "operationId": "signup",
+                "requestBody": {
+                    "description": "form signup",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/signin": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "signin",
+                "description": "-",
+                "operationId": "signin",
+                "requestBody": {
+                    "description": "form signin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username_email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username_email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -388,6 +612,14 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     }
