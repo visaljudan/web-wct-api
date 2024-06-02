@@ -107,4 +107,22 @@ class MovieGenreController extends MainController
 
         return $this->sendSuccess(200, 'Movie genre deleted successfully');
     }
+
+    //Index movie by genre id
+    public function movies($genreId)
+    {
+        $movie = MovieGenre::where('genre_id', $genreId)->get();
+
+        if (!$movie) {
+            return $this->sendSuccess(404, 'Movie genres not found');
+        }
+
+        $movies = $movie->pluck('movie');
+        $additionalData = $movies->pluck('title');
+
+
+
+        $res = new MovieGenreResourceCollection($movie,  $additionalData);
+        return $this->sendSuccess(200, 'Movie Genres Found', $res);
+    }
 }

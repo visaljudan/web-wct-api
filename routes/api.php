@@ -193,6 +193,7 @@ Route::middleware('api')->group(function () {
     //Movie Genres
     Route::get('/movie_genres', [MovieGenreController::class, 'index']);
     Route::get('/movie_genres/{movieId}', [MovieGenreController::class, 'show']);
+    Route::get('/movie_gernes/{genreId}/movies', [MovieGenreController::class, 'movies']);
 
     //Movie Countries
     Route::get('/movie_countries', [MovieCountryController::class, 'index']);
