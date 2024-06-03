@@ -15,18 +15,18 @@ use Illuminate\Support\Facades\Validator;
 class ArtistController extends MainController
 {
     /**
- * @OA\Get(
- *     path="/api/artists",
- *     tags={"Artists"},
- *     summary="Get List Artists Data",
- *     description="enter your Artists here",
- *     operationId="Artists",
- *     @OA\Response(
- *         response="default",
- *         description="return array model Artists"
- *     )
- * )
- */
+     * @OA\Get(
+     *     path="/api/artists",
+     *     tags={"Artists"},
+     *     summary="Get List Artists Data",
+     *     description="enter your Artists here",
+     *     operationId="Artists",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model Artists"
+     *     )
+     * )
+     */
     public function index()
     {
         $artists = Artist::all();
@@ -37,27 +37,27 @@ class ArtistController extends MainController
             return $this->sendSuccess(400, 'No Record Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/artists",
- *     tags={"Artists"},
- *     summary="artists",
- *     description="artists",
- *     operationId="artists",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form artists",
- *          @OA\JsonContent(
- *            required={"artist_name", "artist_profile"},
- *              @OA\Property(property="artist_name", type="string"),
- *              @OA\Property(property="artist_profile", type="string"),
- *          ),
- *      ),
- *    @OA\Response(response="200", description="Success"),
-  *     security={{"Bearer":{}}}
- *   
- * )
- */
+    /**
+     * @OA\Post(
+     *     path="/api/artists",
+     *     tags={"Artists"},
+     *     summary="artists",
+     *     description="artists",
+     *     operationId="artists",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form artists",
+     *          @OA\JsonContent(
+     *            required={"artist_name", "artist_profile"},
+     *              @OA\Property(property="artist_name", type="string"),
+     *              @OA\Property(property="artist_profile", type="string"),
+     *          ),
+     *      ),
+     *    @OA\Response(response="200", description="Success"),
+     *     security={{"Bearer":{}}}
+     *   
+     * )
+     */
     //Stroe
     public function store(Request $request)
     {
@@ -83,7 +83,7 @@ class ArtistController extends MainController
         $res = new ArtistResource($artist);
         return $this->sendSuccess(200, 'Artist created successfully', $res);
     }
-/**
+    /**
      * @OA\Get(
      *     path="/api/artists/{id}",
      *     tags={"Artists"},
@@ -117,7 +117,7 @@ class ArtistController extends MainController
         $res = new ArtistResource($artist);
         return $this->sendSuccess(200, 'Artist Found', $res);
     }
-/**
+    /**
      * @OA\Put(
      *     path="/api/artists/{id}",
      *     tags={"Artists"},
@@ -138,12 +138,12 @@ class ArtistController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"artist_name", "artist_profile"},
- *              @OA\Property(property="artist_name", type="string"),
- *              @OA\Property(property="artist_profile", type="string"),
+     *              @OA\Property(property="artist_name", type="string"),
+     *              @OA\Property(property="artist_profile", type="string"),
      *          ),
      *      ),
      *     @OA\Response(response="200", description="Success"),
-  *         security={{"Bearer":{}}}
+     *         security={{"Bearer":{}}}
      * )
      */
     //Update
@@ -176,7 +176,7 @@ class ArtistController extends MainController
         $res = new ArtistResource($artist);
         return $this->sendSuccess(200, 'Artist updated successfully', $res);
     }
-/**
+    /**
      * @OA\Delete(
      *     path="/api/artists/{id}",
      *     tags={"Artists"},
@@ -193,7 +193,7 @@ class ArtistController extends MainController
      *          )
      *     ),
      *      @OA\Response(response="200", description="Success"),
-  *         security={{"Bearer":{}}}
+     *         security={{"Bearer":{}}}
      * )
      */
     //Destroy
