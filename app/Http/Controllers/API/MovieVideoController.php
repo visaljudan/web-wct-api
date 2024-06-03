@@ -10,8 +10,22 @@ use Illuminate\Support\Facades\Validator;
 class MovieVideoController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
+ * @OA\Get(
+ *     path="/api/movie-videos",
+ *     tags={"Movie-Videos"},
+ *     summary="Get List movie-videos Data",
+ *     description="enter your movie-videos here",
+ *     operationId="movie-videos",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model movie-videos"
+ *     )
+ * )
+ */
+ 
+    // /**
+    //  * Display a listing of the resource.
+    //  */
     public function index()
     {
         $movieVideos = MovieVideo::all();
@@ -29,10 +43,33 @@ class MovieVideoController extends Controller
             ], 400);
         }
     }
-
     /**
-     * Store a newly created resource in storage.
-     */
+ * @OA\Post(
+ *     path="/api/movie-videos",
+ *     tags={"Movie-Videos"},
+ *     summary="movie-videos",
+ *     description="'movie-videos",
+ *     operationId="'Movie-Videos",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form movie-videos",
+ *          @OA\JsonContent(
+ *            required={"movie_id", "title", "video"},
+ *              @OA\Property(property="movie_id", type="string"),
+ *              @OA\Property(property="title", type="string"),
+ *              @OA\Property(property="video", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
+    // /**
+    //  * Store a newly created resource in storage.
+    //  */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -65,10 +102,31 @@ class MovieVideoController extends Controller
             'movieVideo' => $movieVideo,
         ], 201);
     }
-
-    /**
-     * Display the specified resource.
+/**
+     * @OA\Get(
+     *     path="/api/movie-videos/{id}",
+     *     tags={"Movie-Videos"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="movie-videos/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
      */
+    // /**
+    //  * Display the specified resource.
+    //  */
     public function show($id)
     {
         $movieVideo = MovieVideo::find($id);
@@ -87,10 +145,40 @@ class MovieVideoController extends Controller
             'movieVideo' => $movieVideo,
         ], 200);
     }
-
-    /**
-     * Update the specified resource in storage.
+/**
+     * @OA\Put(
+     *     path="/api/movie-videos/{id}",
+     *     tags={"Movie-Videos"},
+     *     summary="Update movie-videos",
+     *     description="-",
+     *     operationId="movie-videos/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"title", "video"},
+ *              @OA\Property(property="title", type="string"),
+ *              @OA\Property(property="video", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
     public function update(Request $request, $id)
     {
         $movieVideo = MovieVideo::find($id);
@@ -133,10 +221,31 @@ class MovieVideoController extends Controller
             'movieVideo' => $movieVideo,
         ], 200);
     }
-
-    /**
-     * Remove the specified resource from storage.
+/**
+     * @OA\Delete(
+     *     path="/api/movie-videos/{id}",
+     *     tags={"Movie-Videos"},
+     *     summary="Delete movie-videos",
+     *     description="-",
+     *     operationId="movie-videos/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Remove the specified resource from storage.
+    //  */
     public function destroy($id)
     {
         $movieVideo = MovieVideo::find($id);

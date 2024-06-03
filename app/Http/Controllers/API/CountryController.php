@@ -12,7 +12,19 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class CountryController extends MainController
-{
+{  /**
+    * @OA\Get(
+    *     path="/api/countries",
+    *     tags={"Countries"},
+    *     summary="Get List countries Data",
+    *     description="enter your countries here",
+    *     operationId="countries",
+    *     @OA\Response(
+    *         response="default",
+    *         description="return array model countries"
+    *     )
+    * )
+    */
     //Index
     public function index()
     {
@@ -25,7 +37,29 @@ class CountryController extends MainController
             return $this->sendError(400, 'No Record Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/countries",
+ *     tags={"Countries"},
+ *     summary="countries",
+ *     description="countries",
+ *     operationId="Countries",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form countries",
+ *          @OA\JsonContent(
+ *            required={"country_code", "country_name"},
+ *              @OA\Property(property="country_code", type="string"),
+ *              @OA\Property(property="country_name", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     //Store
     public function store(Request $request)
     {
@@ -47,7 +81,28 @@ class CountryController extends MainController
         $res = new CountryResource($country);
         return $this->sendSuccess(201, 'Country created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/countries/{id}",
+     *     tags={"Countries"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="countries/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     //Show
     public function show(string $id)
     {
@@ -60,7 +115,37 @@ class CountryController extends MainController
         $res = new CountryResource($country);
         return $this->sendSuccess(200, 'Country Found', $country);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/countries/{id}",
+     *     tags={"Countries"},
+     *     summary="Update countries",
+     *     description="-",
+     *     operationId="countries/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"country_code", "country_name"},
+ *              @OA\Property(property="country_code", type="string"),
+ *              @OA\Property(property="country_name", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     //Update
     public function update(Request $request, string $id)
     {
@@ -88,7 +173,28 @@ class CountryController extends MainController
         $res = new CountryResource($country);
         return $this->sendSuccess(200, 'Country updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/countries/{id}",
+     *     tags={"Countries"},
+     *     summary="Delete countries",
+     *     description="-",
+     *     operationId="Countries/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     /**
      * Remove the specified resource from storage.
      */

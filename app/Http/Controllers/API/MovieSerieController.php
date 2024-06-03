@@ -13,6 +13,19 @@ use Illuminate\Support\Facades\Validator;
 
 class MovieSerieController extends MainController
 {
+          /**
+ * @OA\Get(
+ *     path="/api/movie_series",
+ *     tags={"Movie_Series"},
+ *     summary="Get List Data",
+ *     description="enter your  here",
+ *     operationId="movie_series",
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *     )
+ * )
+ */
     // Index
     public function index()
     {
@@ -25,7 +38,30 @@ class MovieSerieController extends MainController
             return $this->sendError(404, 'No Records Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/movie_series",
+ *     tags={"Movie_Series"},
+ *     summary="movie_series",
+ *     description="movie_series",
+ *     operationId="Movie_Series",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form movie_series",
+ *          @OA\JsonContent(
+ *            required={"movie_id", "season_number", "episode_number"},
+ *              @OA\Property(property="movie_id", type="string"),
+ *              @OA\Property(property="season_number", type="integer"),
+ *              @OA\Property(property="episode_number", type="integer"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     // Store
     public function store(Request $request)
     {
@@ -58,6 +94,28 @@ class MovieSerieController extends MainController
         $res = new MovieSerieResource($movieSeries);
         return $this->sendSuccess(201, 'Movie series created successfully', $res);
     }
+    /**
+     * @OA\Get(
+     *     path="/api/movie_series/{id}",
+     *     tags={"Movie_Series"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="movie_series/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
 
     // Show
     public function show($id)
@@ -71,7 +129,38 @@ class MovieSerieController extends MainController
         $res = new MovieSerieResource($movieSeries);
         return $this->sendSuccess(200, 'Movie Series found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/movie_series{id}",
+     *     tags={"Movie_Series"},
+     *     summary="Update movie_series",
+     *     description="-",
+     *     operationId="movie_series/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"movie_id", "season_number", "episode_number"},
+ *              @OA\Property(property="movie_id", type="string"),
+ *              @OA\Property(property="season_number", type="integer"),
+ *              @OA\Property(property="episode_number", type="integer"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Update
     public function update(Request $request, $id)
     {
@@ -111,6 +200,28 @@ class MovieSerieController extends MainController
         $res = new MovieSerieResource($movieSeries);
         return $this->sendSuccess(200, 'Movie series updated successfully', $res);
     }
+    /**
+     * @OA\Delete(
+     *     path="/api/movie_series/{id}",
+     *     tags={"Movie_Series"},
+     *     summary="Delete movie_series",
+     *     description="-",
+     *     operationId="movie_series/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
 
     // Destroy
     public function destroy($id)

@@ -11,6 +11,20 @@ use Illuminate\Support\Facades\Validator;
 
 class MovieController extends MainController
 {
+    /**
+ * @OA\Get(
+ *     path="/api/movies",
+ *     tags={"Movies"},
+ *     summary="Get List movies Data",
+ *     description="enter your movies here",
+ *     operationId="movies",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model movies"
+ *     )
+ * )
+ */
+ 
     public function index()
     {
         $movies = Movie::all();
@@ -29,10 +43,45 @@ class MovieController extends MainController
             ], 400);
         }
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+/**
+ * @OA\Post(
+ *     path="/api/movies",
+ *     tags={"Movies"},
+ *     summary="movies",
+ *     description="movies",
+ *     operationId="Movies",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form movies",
+ *          @OA\JsonContent(
+ *            required={"title", "overview", "run_time", "release_date", "total_likes", "total_ratings",
+ *                      "average_rating", "poster_image", "cover_image", "trailer_url", "last_upload_date",
+ *                       "subscription_only", "expired_subscription_only"},
+ *              @OA\Property(property="title", type="string"),
+ *              @OA\Property(property="overview", type="string"),
+                * @OA\Property(property="run_time", type="integer"),
+                * @OA\Property(property="release_date", type="date"),
+                 *@OA\Property(property="total_likes", type="integer"),
+                * @OA\Property(property="total_ratings", type="integer"),
+                * @OA\Property(property="average_rating", type="string"),
+                * @OA\Property(property="poster_image", type="string"),
+                * @OA\Property(property="cover_image", type="string"),
+                *@OA\Property(property="trailer_url", type="string"),
+                *@OA\Property(property="last_upload_date", type="date"),
+                *@OA\Property(property="subscription_only", type="string"),
+                *@OA\Property(property="expired_subscription_only", type="date"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
+    // /**
+    //  * Store a newly created resource in storage.
+    //  */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -71,10 +120,31 @@ class MovieController extends MainController
             'movie' => $movie,
         ], 201);
     }
-
-    /**
-     * Display the specified resource.
+/**
+     * @OA\Get(
+     *     path="/api/movies/{id}",
+     *     tags={"Movies"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="Movies/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
      */
+    // /**
+    //  * Display the specified resource.
+    //  */
     public function show($id)
     {
         $movie = Movie::find($id);
@@ -86,10 +156,53 @@ class MovieController extends MainController
         $res = new MovieResource($movie);
         return $this->sendSuccess(200, "Movie have found", $res);
     }
-
-    /**
-     * Update the specified resource in storage.
+/**
+     * @OA\Put(
+     *     path="/api/movies/{id}",
+     *     tags={"Movies"},
+     *     summary="Update movies",
+     *     description="-",
+     *     operationId="movies/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"title", "overview", "run_time", "release_date", "total_likes", "total_ratings",
+ *                      "average_rating", "poster_image", "cover_image", "trailer_url", "last_upload_date",
+ *                       "subscription_only", "expired_subscription_only"},
+ *              @OA\Property(property="title", type="string"),
+ *              @OA\Property(property="overview", type="string"),
+                * @OA\Property(property="run_time", type="integer"),
+                * @OA\Property(property="release_date", type="date"),
+                 *@OA\Property(property="total_likes", type="integer"),
+                * @OA\Property(property="total_ratings", type="integer"),
+                * @OA\Property(property="average_rating", type="string"),
+                * @OA\Property(property="poster_image", type="string"),
+                * @OA\Property(property="cover_image", type="string"),
+                *@OA\Property(property="trailer_url", type="string"),
+                *@OA\Property(property="last_upload_date", type="date"),
+                *@OA\Property(property="subscription_only", type="string"),
+                *@OA\Property(property="expired_subscription_only", type="date"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
     public function update(Request $request, $id)
     {
         $movie = Movie::find($id);
@@ -136,10 +249,31 @@ class MovieController extends MainController
             'movie' => $movie,
         ], 200);
     }
-
-    /**
-     * Remove the specified resource from storage.
+/**
+     * @OA\Delete(
+     *     path="/api/movies/{id}",
+     *     tags={"Movies"},
+     *     summary="Delete movies",
+     *     description="-",
+     *     operationId="movies/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Remove the specified resource from storage.
+    //  */
     public function destroy($id)
     {
         $movie = Movie::find($id);

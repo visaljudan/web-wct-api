@@ -137,7 +137,30 @@ class AuthController extends MainController
 
         return $this->sendError(401, 'Invalid token or user not found', $tokenValue);
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/google",
+ *     tags={"Google"},
+ *     summary="google",
+ *     description="google",
+ *     operationId="google",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form google",
+ *          @OA\JsonContent(
+ *            required={"username", "email", "profile"},
+ *              @OA\Property(property="username", type="string"),
+ *              @OA\Property(property="email", type="string"),
+ *              @OA\Property(property="profile", type="url"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     public function google(Request $request)
     {
         // Validate the request data

@@ -12,8 +12,21 @@ use Illuminate\Support\Facades\Validator;
 class PaymentController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
+ * @OA\Get(
+ *     path="/api/payments",
+ *     tags={"Payments"},
+ *     summary="Get List Artists Data",
+ *     description="enter your Artists here",
+ *     operationId="payments",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model payments"
+ *     )
+ * )
+ */
+    // /**
+    //  * Display a listing of the resource.
+    //  */
     public function index()
     {
         $payments = Payment::all();
@@ -32,10 +45,33 @@ class PaymentController extends Controller
             ], 400);
         }
     }
-
-    /**
-     * Store a newly created payment in storage.
-     */
+/**
+ * @OA\Post(
+ *     path="/api/payments",
+ *     tags={"Payments"},
+ *     summary="payments",
+ *     description="payments",
+ *     operationId="Payments",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form payments",
+ *          @OA\JsonContent(
+ *            required={"user_id", "subscription_plan_id", "payment_status"},
+ *              @OA\Property(property="user_id", type="string"),
+ *              @OA\Property(property="subscription_plan_id", type="string"),
+ *              @OA\Property(property="payment_status", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
+    // /**
+    //  * Store a newly created payment in storage.
+    //  */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -95,13 +131,34 @@ class PaymentController extends Controller
         ], 201);
     }
 
-
-    /**
-     * Display the specified payment.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+/**
+     * @OA\Get(
+     *     path="/api/payments/{id}",
+     *     tags={"Payments"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="payments/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
      */
+    // /**
+    //  * Display the specified payment.
+    //  *
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
     public function show($id)
     {
         $payment = Payment::find($id);
@@ -120,14 +177,34 @@ class PaymentController extends Controller
             'payment' => $payment
         ], 200);
     }
-
-
-    /**
-     * Remove the specified payment from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+/**
+     * @OA\Delete(
+     *     path="/api/payments/{id}",
+     *     tags={"Payments"},
+     *     summary="Delete payments",
+     *     description="-",
+     *     operationId="payments/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Remove the specified payment from storage.
+    //  *
+    //  * @param  int  $id
+    //  * @return \Illuminate\Http\Response
+    //  */
     public function destroy($id)
     {
         $payment = Payment::find($id);

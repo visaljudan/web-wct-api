@@ -12,6 +12,19 @@ use Illuminate\Support\Facades\Validator;
 
 class RequestedMovieResponseController extends MainController
 {
+      /**
+ * @OA\Get(
+ *     path="/api/requested-movie-responses",
+ *     tags={"Requested-Movie-Responses"},
+ *     summary="Get List requested-movie-responses Data",
+ *     description="enter your requested-movie-responses here",
+ *     operationId="requested-movie-responses",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model requested-movie-responses"
+ *     )
+ * )
+ */
     // Index
     public function index()
     {
@@ -28,7 +41,31 @@ class RequestedMovieResponseController extends MainController
             return $this->sendError(400, 'No Record Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/requested-movie-responses",
+ *     tags={"Requested-Movie-Responses"},
+ *     summary="requested-movie-responses",
+ *     description="requested-movie-responses",
+ *     operationId="Requested-Movie-Responses",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form requested-movie-responses",
+ *          @OA\JsonContent(
+ *            required={"requested_movie_id", "user_id", "response_message","response_status"},
+ *              @OA\Property(property="requested_movie_id", type="string"),
+ *              @OA\Property(property="user_id", type="string"),
+                * @OA\Property(property="response_message", type="string"),
+                * @OA\Property(property="response_status", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     // Store
     public function store(Request $request)
     {
@@ -52,7 +89,28 @@ class RequestedMovieResponseController extends MainController
         $res = new RequestedMovieResponseResource($requestedMovieResponse);
         return $this->sendSuccess(201, 'Requested movie response created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/requested-movie-responses/{id}",
+     *     tags={"Requested-Movie-Responses"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="requested-movie-responses/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     // Show
     public function show($id)
     {
@@ -69,7 +127,39 @@ class RequestedMovieResponseController extends MainController
         $res = new RequestedMovieResponseResource($requestedMovieResponse);
         return $this->sendSuccess(200, 'Requested Movie Response found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/requested-movie-responses/{id}",
+     *     tags={"Requested-Movie-Responses"},
+     *     summary="Update requested-movie-responses",
+     *     description="-",
+     *     operationId="requested-movie-responses/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"requested_movie_id", "user_id","response_message","response_status"},
+ *              @OA\Property(property="requested_movie_id", type="string"),
+ *              @OA\Property(property="user_id", type="string"),
+                * @OA\Property(property="response_message", type="string"),
+                * @OA\Property(property="response_status", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Update
     public function update(Request $request, $id)
     {
@@ -99,7 +189,28 @@ class RequestedMovieResponseController extends MainController
         $res = new RequestedMovieResponseResource($requestedMovieResponse);
         return $this->sendSuccess(200, 'Requested movie response updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/requested-movie-responses/{id}",
+     *     tags={"Requested-Movie-Responses"},
+     *     summary="Delete requested-movie-responses",
+     *     description="-",
+     *     operationId="requested-movie-responses/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Destroy
     public function destroy($id)
     {

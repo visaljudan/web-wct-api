@@ -9,6 +9,20 @@ use Illuminate\Support\Facades\Validator;
 
 class MovieSubscriptionController extends Controller
 {
+     /**
+ * @OA\Get(
+ *     path="/api/movie-subscriptions",
+ *     tags={"Movie-Subscriptions"},
+ *     summary="Get List  Data",
+ *     description="enter here",
+ *     operationId="Movie-Subscriptions",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model movie-subscriptions"
+ *     )
+ * )
+ */
+ 
     /**
      * Display a listing of the resource.
      */

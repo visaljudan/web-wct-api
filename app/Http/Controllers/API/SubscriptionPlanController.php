@@ -9,10 +9,22 @@ use Illuminate\Support\Facades\Validator;
 
 
 class SubscriptionPlanController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
+{   /**
+    * @OA\Get(
+    *     path="/api/subscription-plans",
+    *     tags={"Subscription-Plans"},
+    *     summary="Get List subscription-plans Data",
+    *     description="enter your subscription-plans here",
+    *     operationId="subscription-plans",
+    *     @OA\Response(
+    *         response="default",
+    *         description="return array model subscription-plans"
+    *     )
+    * )
+    */
+    // /**
+    //  * Display a listing of the resource.
+    //  */
     public function index()
     {
         $subscriptionPlans = SubscriptionPlan::all();
@@ -30,10 +42,34 @@ class SubscriptionPlanController extends Controller
             ], 400);
         }
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+/**
+ * @OA\Post(
+ *     path="/api/subscription-plans",
+ *     tags={"Subscription-Plans"},
+ *     summary="subscription-plans",
+ *     description="subscription-plans",
+ *     operationId="Subscription-Plans",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form subscription-plans",
+ *          @OA\JsonContent(
+ *            required={"subscription_plan_name", "subscription_plan_description", "subscription_plan_price", "subscription_plan_duration"},
+ *              @OA\Property(property="subscription_plan_name", type="string"),
+ *              @OA\Property(property="subscription_plan_description", type="string"),
+            * @OA\Property(property="subscription_plan_price", type="string"),
+            * @OA\Property(property="subscription_plan_duration", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
+    // /**
+    //  * Store a newly created resource in storage.
+    //  */
     public function store(Request $request)
     {
         // Validate incoming request data
@@ -80,8 +116,30 @@ class SubscriptionPlanController extends Controller
         ], 201);
     }
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/subscription-plans/{id}",
+     *     tags={"Subscription-Plans"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="subscription-plans/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
      */
+    // /**
+    //  * Display the specified resource.
+    //  */
     public function show($id)
     {
         $subscriptionPlan = SubscriptionPlan::find($id);
@@ -102,10 +160,42 @@ class SubscriptionPlanController extends Controller
             'subscription_plan' => $subscriptionPlan
         ], 200);
     }
-
-    /**
-     * Update the specified resource in storage.
+/**
+     * @OA\Put(
+     *     path="/api/subscription-plans/{id}",
+     *     tags={"Subscription-Plans"},
+     *     summary="Update subscription-plans",
+     *     description="-",
+     *     operationId="subscription-plans/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"subscription_plan_name", "subscription_plan_description", "subscription_plan_price", "subscription_plan_duration"},
+ *              @OA\Property(property="subscription_plan_name", type="string"),
+ *              @OA\Property(property="subscription_plan_description", type="string"),
+            * @OA\Property(property="subscription_plan_price", type="numeric"),
+            * @OA\Property(property="subscription_plan_duration", type="integer"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
     public function update(Request $request, $id)
     {
         // Find the subscription plan by ID
@@ -155,10 +245,31 @@ class SubscriptionPlanController extends Controller
             'subscription_plan' => $subscriptionPlan,
         ], 200);
     }
-
-    /**
-     * Remove the specified resource from storage.
+/**
+     * @OA\Delete(
+     *     path="/api/subscription-plans/{id}",
+     *     tags={"Subscription-Plans"},
+     *     summary="Delete subscription-plans",
+     *     description="-",
+     *     operationId="subscription-plans/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Remove the specified resource from storage.
+    //  */
     public function destroy(string $id)
     {
         $subscriptionPlan = SubscriptionPlan::find($id);

@@ -12,6 +12,19 @@ use Illuminate\Support\Facades\Validator;
 
 class RatedMovieController extends MainController
 {
+    /**
+ * @OA\Get(
+ *     path="/api/rated-movies",
+ *     tags={"Rated-Movies"},
+ *     summary="Get List rated-movies Data",
+ *     description="enter your rated-movies here",
+ *     operationId="rated-movies",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model rated-movies"
+ *     )
+ * )
+ */
     // Index
     public function index()
     {
@@ -28,7 +41,30 @@ class RatedMovieController extends MainController
             return $this->sendError(400, 'No Record Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/rated-movies",
+ *     tags={"Rated-Movies"},
+ *     summary="rated-movies",
+ *     description="rated-movies",
+ *     operationId="Rated-Movies",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form rated-movies",
+ *          @OA\JsonContent(
+ *            required={"user_id", "movie_id","rated_value"},
+ *              @OA\Property(property="user_id", type="string"),
+ *              @OA\Property(property="movie_id", type="string"),
+ *              @OA\Property(property="rated_value", type="integer"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     // Store
     public function store(Request $request)
     {
@@ -59,7 +95,28 @@ class RatedMovieController extends MainController
         $res = new RatedMovieResource($ratedMovie);
         return $this->sendSuccess(201, 'Rated movie created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/rated-movies/{id}",
+     *     tags={"Rated-Movies"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="rated-movies/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     // Show
     public function show($id)
     {
@@ -76,7 +133,38 @@ class RatedMovieController extends MainController
         $res = new RatedMovieResource($ratedMovie);
         return $this->sendSuccess(200, 'Rated Movie found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/rated-movies/{id}",
+     *     tags={"Rated-Movies"},
+     *     summary="Update rated-movies",
+     *     description="-",
+     *     operationId="rated-movies/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"user_id", "movie_id","rated_value"},
+ *              @OA\Property(property="user_id", type="string"),
+ *              @OA\Property(property="movie_id", type="string"),
+ *              @OA\Property(property="rated_value", type="integer"),    
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Update
     public function update(Request $request, $id)
     {
@@ -105,7 +193,28 @@ class RatedMovieController extends MainController
         $res = new RatedMovieResource($ratedMovie);
         return $this->sendSuccess(200, 'Rated movie updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/rated-movies/{id}",
+     *     tags={"Rated-Movies"},
+     *     summary="Delete rated-movies",
+     *     description="-",
+     *     operationId="rated-movies/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Destroy
     public function destroy($id)
     {

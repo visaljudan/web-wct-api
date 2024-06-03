@@ -42,7 +42,7 @@ class ArtistController extends MainController
  *     path="/api/artists",
  *     tags={"Artists"},
  *     summary="artists",
- *     description="-",
+ *     description="artists",
  *     operationId="artists",
  *     @OA\RequestBody(
  *          required=true,
@@ -56,6 +56,7 @@ class ArtistController extends MainController
  *     @OA\Response(
  *         response="default",
  *         description=""
+ *        
  *     )
  * )
  */
@@ -66,7 +67,6 @@ class ArtistController extends MainController
             'artist_name' => 'required|string|unique:artists',
             'artist_profile' => 'required|string',
             // 'artist_profile' => 'nullable|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-
         ]);
 
         if ($validator->fails()) {

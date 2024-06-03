@@ -12,7 +12,19 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class RoleController extends MainController
-{
+{ /**
+    * @OA\Get(
+    *     path="/api/roles",
+    *     tags={"Roles"},
+    *     summary="Get List roles Data",
+    *     description="enter your roles here",
+    *     operationId="roles",
+    *     @OA\Response(
+    *         response="default",
+    *         description="return array model roles"
+    *     )
+    * )
+    */
     //index
     public function index()
     {
@@ -24,7 +36,28 @@ class RoleController extends MainController
             return $this->sendError(400, "No Record Found");
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/roles",
+ *     tags={"Roles"},
+ *     summary="roles",
+ *     description="roles",
+ *     operationId="Roles",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form roles",
+ *          @OA\JsonContent(
+ *            required={"role_name"},
+ *              @OA\Property(property="role_name", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     //Store
     public function store(Request $request)
     {
@@ -47,7 +80,28 @@ class RoleController extends MainController
         $res = new RoleResource($role);
         return $this->sendSuccess(201, "Role created successfully", $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/roles/{id}",
+     *     tags={"Roles"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="roles/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
 
     public function show($id)
     {
@@ -61,7 +115,36 @@ class RoleController extends MainController
         $res = new RoleResource($role);
         return $this->sendSuccess(200, "Role Found", $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/roles/{id}",
+     *     tags={"Roles"},
+     *     summary="Update roles",
+     *     description="-",
+     *     operationId="roles/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"role_name"},
+ *              @OA\Property(property="role_name", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     //Update
     public function update(Request $request, $id)
     {
@@ -88,7 +171,28 @@ class RoleController extends MainController
         $res = new RoleResource($role);
         return $this->sendSuccess(200, 'Role updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/roles/{id}",
+     *     tags={"Roles"},
+     *     summary="Delete roles",
+     *     description="-",
+     *     operationId="roles/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     //Destroy
     public function destroy($id)
     {
