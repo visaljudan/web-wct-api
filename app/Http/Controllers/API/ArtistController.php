@@ -57,7 +57,6 @@ class ArtistController extends MainController
      *     security={{"Bearer":{}}}
      * )
      */
-    //Stroe
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
