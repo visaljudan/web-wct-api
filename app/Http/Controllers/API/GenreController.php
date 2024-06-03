@@ -12,7 +12,19 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class GenreController extends MainController
-{
+{   /**
+    * @OA\Get(
+    *     path="/api/genres",
+    *     tags={"Genres"},
+    *     summary="Get List genres Data",
+    *     description="enter your genres here",
+    *     operationId="genres",
+    *     @OA\Response(
+    *         response="default",
+    *         description="return array model genres"
+    *     )
+    * )
+    */
     //Index
     public function index()
     {
@@ -26,7 +38,28 @@ class GenreController extends MainController
             return $this->sendError('No Record Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/genres",
+ *     tags={"Genres"},
+ *     summary="genres",
+ *     description="genres",
+ *     operationId="Genres",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form genres",
+ *          @OA\JsonContent(
+ *            required={"genre_name"},
+ *              @OA\Property(property="genre_name", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     //Store
     public function store(Request $request)
     {
@@ -50,7 +83,28 @@ class GenreController extends MainController
         $res = new GenreResource($genre);
         return $this->sendSuccess(201, 'Genre created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/genres/{id}",
+     *     tags={"Genres"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="genres/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     //Show
     public function show($id)
     {
@@ -66,10 +120,39 @@ class GenreController extends MainController
         $res = new GenreResource($genre);
         return $this->sendSuccess(200, 'Genre found', $res);
     }
-
-    /**
-     * Update the specified resource in storage.
+/**
+     * @OA\Put(
+     *     path="/api/genres/{id}",
+     *     tags={"Genres"},
+     *     summary="Update genres",
+     *     description="-",
+     *     operationId="genres/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"genre_name"},
+ *              @OA\Property(property="genre_name", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Update the specified resource in storage.
+    //  */
     public function update(Request $request, $id)
     {
         $genre = Genre::find($id);
@@ -97,10 +180,31 @@ class GenreController extends MainController
         $res = new GenreResource($genre);
         return $this->sendSuccess(200, 'Genre updated successfully', $res);
     }
-
-    /**
-     * Remove the specified resource from storage.
+/**
+     * @OA\Delete(
+     *     path="/api/genres/{id}",
+     *     tags={"Genres"},
+     *     summary="Delete genres",
+     *     description="-",
+     *     operationId="genres/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
      */
+    // /**
+    //  * Remove the specified resource from storage.
+    //  */
     public function destroy($id)
     {
         $genre = Genre::find($id);

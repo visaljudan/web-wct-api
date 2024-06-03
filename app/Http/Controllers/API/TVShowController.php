@@ -10,7 +10,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class TVShowController extends MainController
-{
+{      /**
+    * @OA\Get(
+    *     path="/api/tv_shows",
+    *     tags={"Tv_Shows"},
+    *     summary="Get List Data",
+    *     description="enter your  here",
+    *     operationId="tv_shows",
+    *     @OA\Response(
+    *         response="default",
+    *         description=""
+    *     )
+    * )
+    */
+  
     // Index
     public function index()
     {
@@ -23,7 +36,29 @@ class TVShowController extends MainController
             return $this->sendError(404, 'No Records Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/tv_shows",
+ *     tags={"Tv_Shows"},
+ *     summary="tv_shows",
+ *     description="tv_shows",
+ *     operationId="Tv_Shows",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form tv_shows",
+ *          @OA\JsonContent(
+ *            required={"tv_show_name"},
+ *              @OA\Property(property="tv_show_name", type="string"),
+ *            
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     // Store
     public function store(Request $request)
     {
@@ -40,7 +75,28 @@ class TVShowController extends MainController
         $res = new TVShowResource($tvShow);
         return $this->sendSuccess(201, 'TV show created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/tv_shows/{id}",
+     *     tags={"Tv_Shows"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="tv_shows/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     // Show
     public function show($id)
     {
@@ -53,7 +109,37 @@ class TVShowController extends MainController
         $res = new TVShowResource($tvShow);
         return $this->sendSuccess(200, 'TV Show found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/tv_shows{id}",
+     *     tags={"Tv_Shows"},
+     *     summary="Update artist",
+     *     description="-",
+     *     operationId="tv_shows/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"tv_show_name"},
+ *              @OA\Property(property="tv_show_name", type="string"),
+ *             
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Update
     public function update(Request $request, $id)
     {
@@ -76,7 +162,28 @@ class TVShowController extends MainController
         $res = new TVShowResource($tvShow);
         return $this->sendSuccess(200, 'TV show updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/tv_shows/{id}",
+     *     tags={"Tv_Shows"},
+     *     summary="Delete artist",
+     *     description="-",
+     *     operationId="tv_shows/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Destroy
     public function destroy($id)
     {

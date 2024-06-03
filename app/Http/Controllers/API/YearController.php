@@ -12,7 +12,19 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class YearController extends MainController
-{
+{  /**
+    * @OA\Get(
+    *     path="/api/years",
+    *     tags={"Years"},
+    *     summary="Get List years Data",
+    *     description="enter your years here",
+    *     operationId="years",
+    *     @OA\Response(
+    *         response="default",
+    *         description="return array model years"
+    *     )
+    * )
+    */
     // Index
     public function index()
     {
@@ -25,7 +37,29 @@ class YearController extends MainController
             return $this->sendError('No Record Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/years",
+ *     tags={"Years"},
+ *     summary="years",
+ *     description="years",
+ *     operationId="Years",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form years",
+ *          @OA\JsonContent(
+ *            required={"year"},
+ *              @OA\Property(property="year", type="integer"),
+ *             
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     // Store
     public function store(Request $request)
     {
@@ -48,7 +82,28 @@ class YearController extends MainController
         $res = new YearResource($year);
         return $this->sendSuccess(201, 'Year created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/years/{id}",
+     *     tags={"Years"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="years/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     // Show
     public function show($id)
     {
@@ -64,7 +119,37 @@ class YearController extends MainController
         $res = new YearResource($year);
         return $this->sendSuccess(200, 'Year found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/years/{id}",
+     *     tags={"Years"},
+     *     summary="Update years",
+     *     description="-",
+     *     operationId="years/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"year"},
+ *              @OA\Property(property="year", type="integer"),
+ *             
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Update
     public function update(Request $request, $id)
     {
@@ -92,7 +177,28 @@ class YearController extends MainController
         $res = new YearResource($year);
         return $this->sendSuccess(200, 'Year updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/years/{id}",
+     *     tags={"Years"},
+     *     summary="Delete years",
+     *     description="-",
+     *     operationId="years/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Destroy
     public function destroy($id)
     {

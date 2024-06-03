@@ -13,6 +13,19 @@ use Illuminate\Support\Facades\Validator;
 
 class MovieLanguageController extends MainController
 {
+      /**
+ * @OA\Get(
+ *     path="/api/movie_languages",
+ *     tags={"Movie_Languages"},
+ *     summary="Get List Artists Data",
+ *     description="enter your Artists here",
+ *     operationId="movie_languages",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model Artists"
+ *     )
+ * )
+ */
     // Index
     public function index()
     {
@@ -25,7 +38,29 @@ class MovieLanguageController extends MainController
             return $this->sendError(404, 'No Records Found');
         }
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/movie_languages",
+ *     tags={"Movie_Languages"},
+ *     summary="movie_languages",
+ *     description="movie_languages",
+ *     operationId="Movie_Languages",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form movie_languages",
+ *          @OA\JsonContent(
+ *            required={"movie_id", "language_code"},
+ *              @OA\Property(property="movie_id", type="string"),
+ *              @OA\Property(property="language_code", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     // Store
     public function store(Request $request)
     {
@@ -47,7 +82,28 @@ class MovieLanguageController extends MainController
         $res = new MovieLanguageResource($movieLanguage);
         return $this->sendSuccess(201, 'Movie language created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/movie_languages/{id}",
+     *     tags={"Movie_Languages"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="movie_languages/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     // Show
     public function show($id)
     {
@@ -60,7 +116,37 @@ class MovieLanguageController extends MainController
         $res = new MovieLanguageResource($movieLanguage);
         return $this->sendSuccess(200, 'Movie Language found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/movie_languages/{id}",
+     *     tags={"Movie_Languages"},
+     *     summary="Update movie_languages",
+     *     description="-",
+     *     operationId="movie_languages/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"movie_id", "language_code"},
+ *              @OA\Property(property="movie_id", type="string"),
+ *              @OA\Property(property="language_code", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Update
     public function update(Request $request, $id)
     {
@@ -88,7 +174,28 @@ class MovieLanguageController extends MainController
         $res = new MovieLanguageResource($movieLanguage);
         return $this->sendSuccess(200, 'Movie language updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/movie_languages/{id}",
+     *     tags={"Movie_Languages"},
+     *     summary="Delete movie_languages",
+     *     description="-",
+     *     operationId="movie_languages/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Destroy
     public function destroy($id)
     {

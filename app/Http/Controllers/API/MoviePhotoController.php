@@ -10,7 +10,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class MoviePhotoController extends MainController
-{
+{ 
+ /**
+ * @OA\Get(
+ *     path="/api/movie_photos",
+ *     tags={"Movie_Photos"},
+ *     summary="Get List movie_photos Data",
+ *     description="enter your movie_photos here",
+ *     operationId="Movie_Photos",
+ *     @OA\Response(
+ *         response="default",
+ *         description="return array model movie_photos"
+ *     )
+ * )
+ */
     public function index()
     {
         $moviePhotos = MoviePhoto::all();
@@ -22,10 +35,32 @@ class MoviePhotoController extends MainController
         }
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
+/**
+ * @OA\Post(
+ *     path="/api/movie_photos",
+ *     tags={"Movie_Photos"},
+ *     summary="movie_photos",
+ *     description="movie_photos",
+ *     operationId="movie_photos",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form movie_photos",
+ *          @OA\JsonContent(
+ *            required={"movie_id", "photo"},
+ *              @OA\Property(property="movie_id", type="string"),
+ *              @OA\Property(property="photo", type="image"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
+    // /**
+    //  * Store a newly created resource in storage.
+    //  */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -48,10 +83,9 @@ class MoviePhotoController extends MainController
         $res = new MoviePhotoResource($moviePhoto);
         return $this->sendSuccess(201, 'Movie photo uploaded successfully', $res);
     }
-
-    /**
-     * Display the specified resource.
-     */
+    // /**
+    //  * Display the specified resource.
+    //  */
     public function show($movieId)
     {
         $moviePhoto = MoviePhoto::where('movie_id', $movieId)->get();

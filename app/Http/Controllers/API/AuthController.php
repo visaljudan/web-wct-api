@@ -12,7 +12,29 @@ use Illuminate\Support\Str;
 
 class AuthController extends MainController
 {
-
+/**
+ * @OA\Post(
+ *     path="/api/signup",
+ *     tags={"Auth"},
+ *     summary="signup",
+ *     description="-",
+ *     operationId="signup",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form signup",
+ *          @OA\JsonContent(
+ *            required={"username", "email", "password"},
+ *              @OA\Property(property="username", type="string"),
+ *              @OA\Property(property="email", type="string"),
+ *              @OA\Property(property="password", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *     )
+ * )
+ */
     public function signup(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -41,7 +63,28 @@ class AuthController extends MainController
 
         return $this->sendSuccess(200, 'User registered successfully', $res);
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/signin",
+ *     tags={"Auth"},
+ *     summary="signin",
+ *     description="-",
+ *     operationId="signin",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form signin",
+ *          @OA\JsonContent(
+ *            required={"username_email", "password"},
+ *              @OA\Property(property="username_email", type="string"),
+ *              @OA\Property(property="password", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *     )
+ * )
+ */
     public function signin(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -94,7 +137,30 @@ class AuthController extends MainController
 
         return $this->sendError(401, 'Invalid token or user not found', $tokenValue);
     }
-
+/**
+ * @OA\Post(
+ *     path="/api/google",
+ *     tags={"Google"},
+ *     summary="google",
+ *     description="google",
+ *     operationId="google",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form google",
+ *          @OA\JsonContent(
+ *            required={"username", "email", "profile"},
+ *              @OA\Property(property="username", type="string"),
+ *              @OA\Property(property="email", type="string"),
+ *              @OA\Property(property="profile", type="url"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     public function google(Request $request)
     {
         // Validate the request data

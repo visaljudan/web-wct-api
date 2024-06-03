@@ -29,7 +29,29 @@ class SavedMovieController extends MainController
     //         return $this->sendError(404, 'No Records Found');
     //     }
     // }
-
+/**
+ * @OA\Post(
+ *     path="/api/saved-movies",
+ *     tags={"Saved-Movies"},
+ *     summary="saved-movies",
+ *     description="saved-movies",
+ *     operationId="Saved-Movies",
+ *     @OA\RequestBody(
+ *          required=true,
+ *          description="form saved-movies",
+ *          @OA\JsonContent(
+ *            required={"user_id", "movie_id"},
+ *              @OA\Property(property="user_id", type="string"),
+ *              @OA\Property(property="movie_id", type="string"),
+ *          ),
+ *      ),
+ *     @OA\Response(
+ *         response="default",
+ *         description=""
+ *        
+ *     )
+ * )
+ */
     // Store
     public function store(Request $request)
     {
@@ -51,7 +73,28 @@ class SavedMovieController extends MainController
         $res = new SavedMovieResource($savedMovie);
         return $this->sendSuccess(201, 'Saved movie created successfully', $res);
     }
-
+/**
+     * @OA\Get(
+     *     path="/api/saved-movies/{id}",
+     *     tags={"Saved-Movies"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="saved-movies/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     // Show
     public function show($id)
     {
@@ -69,7 +112,37 @@ class SavedMovieController extends MainController
         $res = new SavedMovieResource($savedMovie);
         return $this->sendSuccess(200, 'Saved Movie found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/saved-movies/{id}",
+     *     tags={"Saved-Movies"},
+     *     summary="Update saved-movies",
+     *     description="-",
+     *     operationId="saved-movies/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"user_id", "movie_id"},
+ *              @OA\Property(property="user_id", type="string"),
+ *              @OA\Property(property="movie_id", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Update
     public function update(Request $request, $id)
     {
@@ -97,7 +170,28 @@ class SavedMovieController extends MainController
         $res = new SavedMovieResource($savedMovie);
         return $this->sendSuccess(200, 'Saved movie updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/saved-movies/{id}",
+     *     tags={"Saved-Movies"},
+     *     summary="Delete saved-movies",
+     *     description="-",
+     *     operationId="saved-movies/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     // Destroy
     public function destroy($id)
     {

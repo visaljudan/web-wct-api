@@ -1,18 +1,3100 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Let's Watch API by Visal Judan (only)",
-        "description": "Ah menh hz ah vith ot ban jouy tver teh",
+        "title": "API Documentation ",
+        "description": "API Documentation",
         "contact": {
-            "email": "visal.nls2003@gmail.com"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
+            "email": "srundavith@gmail.com"
         },
         "version": "1.0.0"
     },
     "paths": {
+        "/api/artists": {
+            "get": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Get List Artists Data",
+                "description": "enter your Artists here",
+                "operationId": "Artists",
+                "responses": {
+                    "default": {
+                        "description": "return array model Artists"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "artists",
+                "description": "artists",
+                "operationId": "artists",
+                "requestBody": {
+                    "description": "form artists",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "artist_name",
+                                    "artist_profile"
+                                ],
+                                "properties": {
+                                    "artist_name": {
+                                        "type": "string"
+                                    },
+                                    "artist_profile": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/artists/{id}": {
+            "get": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "artist/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Update artist",
+                "description": "-",
+                "operationId": "Artist/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "artist_name",
+                                    "artist_profile"
+                                ],
+                                "properties": {
+                                    "artist_name": {
+                                        "type": "string"
+                                    },
+                                    "artist_profile": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Artists"
+                ],
+                "summary": "Delete artist",
+                "description": "-",
+                "operationId": "artist/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/signup": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "signup",
+                "description": "-",
+                "operationId": "signup",
+                "requestBody": {
+                    "description": "form signup",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/signin": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "signin",
+                "description": "-",
+                "operationId": "signin",
+                "requestBody": {
+                    "description": "form signin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username_email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username_email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/google": {
+            "post": {
+                "tags": [
+                    "Google"
+                ],
+                "summary": "google",
+                "description": "google",
+                "operationId": "google",
+                "requestBody": {
+                    "description": "form google",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "email",
+                                    "profile"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "profile": {
+                                        "type": "url"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/countries": {
+            "get": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Get List countries Data",
+                "description": "enter your countries here",
+                "operationId": "countries",
+                "responses": {
+                    "default": {
+                        "description": "return array model countries"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "countries",
+                "description": "countries",
+                "operationId": "Countries",
+                "requestBody": {
+                    "description": "form countries",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "country_code",
+                                    "country_name"
+                                ],
+                                "properties": {
+                                    "country_code": {
+                                        "type": "string"
+                                    },
+                                    "country_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/countries/{id}": {
+            "get": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "countries/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Update countries",
+                "description": "-",
+                "operationId": "countries/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "country_code",
+                                    "country_name"
+                                ],
+                                "properties": {
+                                    "country_code": {
+                                        "type": "string"
+                                    },
+                                    "country_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/genres": {
+            "get": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Get List genres Data",
+                "description": "enter your genres here",
+                "operationId": "genres",
+                "responses": {
+                    "default": {
+                        "description": "return array model genres"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "genres",
+                "description": "genres",
+                "operationId": "Genres",
+                "requestBody": {
+                    "description": "form genres",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "genre_name"
+                                ],
+                                "properties": {
+                                    "genre_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/genres/{id}": {
+            "get": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "genres/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Update genres",
+                "description": "-",
+                "operationId": "genres/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "genre_name"
+                                ],
+                                "properties": {
+                                    "genre_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Genres"
+                ],
+                "summary": "Delete genres",
+                "description": "-",
+                "operationId": "genres/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/languages": {
+            "get": {
+                "tags": [
+                    "Languages"
+                ],
+                "summary": "Get List Data",
+                "description": "enter your  here",
+                "operationId": "languages",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Languages"
+                ],
+                "summary": "languages",
+                "description": "languages",
+                "operationId": "Languages",
+                "requestBody": {
+                    "description": "form languages",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "language_code",
+                                    "language_name"
+                                ],
+                                "properties": {
+                                    "language_code": {
+                                        "type": "string"
+                                    },
+                                    "language_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/languages/{id}": {
+            "get": {
+                "tags": [
+                    "Languages"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "languages/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Languages"
+                ],
+                "summary": "Update languages",
+                "description": "-",
+                "operationId": "languages/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "language_code",
+                                    "language_name"
+                                ],
+                                "properties": {
+                                    "language_code": {
+                                        "type": "string"
+                                    },
+                                    "language_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Languages"
+                ],
+                "summary": "Delete languages",
+                "description": "-",
+                "operationId": "languages/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_artists": {
+            "get": {
+                "tags": [
+                    "Movie_Artists"
+                ],
+                "summary": "Get List movie_artists Data",
+                "description": "enter your movie_artists here",
+                "operationId": "Movie_Artists",
+                "responses": {
+                    "default": {
+                        "description": "return array model movie_artists"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movie_Artists"
+                ],
+                "summary": "movie_artists",
+                "description": "-",
+                "operationId": "movie_artists",
+                "requestBody": {
+                    "description": "form movie_artists",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "artist_id",
+                                    "role_id",
+                                    "movie_artist_name"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "artist_id": {
+                                        "type": "string"
+                                    },
+                                    "role_id": {
+                                        "type": "string"
+                                    },
+                                    "movie_artist_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_artists/{id}": {
+            "get": {
+                "tags": [
+                    "Movie_Artists"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "movie_artists/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Movie_Artists"
+                ],
+                "summary": "Update artist",
+                "description": "-",
+                "operationId": "movie_artists/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "artist_id",
+                                    "role_id",
+                                    "movie_artist_name"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "artist_id": {
+                                        "type": "string"
+                                    },
+                                    "role_id": {
+                                        "type": "string"
+                                    },
+                                    "movie_artist_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Movie_Artists"
+                ],
+                "summary": "Delete movie_artists",
+                "description": "-",
+                "operationId": "movie_artists/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movies": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get List movies Data",
+                "description": "enter your movies here",
+                "operationId": "movies",
+                "responses": {
+                    "default": {
+                        "description": "return array model movies"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "movies",
+                "description": "movies",
+                "operationId": "Movies",
+                "requestBody": {
+                    "description": "form movies",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "overview",
+                                    "run_time",
+                                    "release_date",
+                                    "total_likes",
+                                    "total_ratings",
+                                    "average_rating",
+                                    "poster_image",
+                                    "cover_image",
+                                    "trailer_url",
+                                    "last_upload_date",
+                                    "subscription_only",
+                                    "expired_subscription_only"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "overview": {
+                                        "type": "string"
+                                    },
+                                    "run_time": {
+                                        "type": "integer"
+                                    },
+                                    "release_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "total_likes": {
+                                        "type": "integer"
+                                    },
+                                    "total_ratings": {
+                                        "type": "integer"
+                                    },
+                                    "average_rating": {
+                                        "type": "string"
+                                    },
+                                    "poster_image": {
+                                        "type": "string"
+                                    },
+                                    "cover_image": {
+                                        "type": "string"
+                                    },
+                                    "trailer_url": {
+                                        "type": "string"
+                                    },
+                                    "last_upload_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "subscription_only": {
+                                        "type": "string"
+                                    },
+                                    "expired_subscription_only": {
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movies/{id}": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "Movies/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Update movies",
+                "description": "-",
+                "operationId": "movies/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "overview",
+                                    "run_time",
+                                    "release_date",
+                                    "total_likes",
+                                    "total_ratings",
+                                    "average_rating",
+                                    "poster_image",
+                                    "cover_image",
+                                    "trailer_url",
+                                    "last_upload_date",
+                                    "subscription_only",
+                                    "expired_subscription_only"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "overview": {
+                                        "type": "string"
+                                    },
+                                    "run_time": {
+                                        "type": "integer"
+                                    },
+                                    "release_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "total_likes": {
+                                        "type": "integer"
+                                    },
+                                    "total_ratings": {
+                                        "type": "integer"
+                                    },
+                                    "average_rating": {
+                                        "type": "string"
+                                    },
+                                    "poster_image": {
+                                        "type": "string"
+                                    },
+                                    "cover_image": {
+                                        "type": "string"
+                                    },
+                                    "trailer_url": {
+                                        "type": "string"
+                                    },
+                                    "last_upload_date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "subscription_only": {
+                                        "type": "string"
+                                    },
+                                    "expired_subscription_only": {
+                                        "type": "string",
+                                        "format": "date"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Delete movies",
+                "description": "-",
+                "operationId": "movies/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_countries": {
+            "get": {
+                "tags": [
+                    "Movie_Countries"
+                ],
+                "summary": "Get List movie_countries Data",
+                "description": "enter your movie_countries here",
+                "operationId": "movie_countries",
+                "responses": {
+                    "default": {
+                        "description": "return array model movie_countries"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movie_Countries"
+                ],
+                "summary": "movie_countries",
+                "description": "movie_countries",
+                "operationId": "Movie_Countries",
+                "requestBody": {
+                    "description": "form movie_countries",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "country_id"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "country_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_countries/{id}": {
+            "get": {
+                "tags": [
+                    "Movie_Countries"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "movie_countries/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Movie_Countries"
+                ],
+                "summary": "Update movie_countries",
+                "description": "-",
+                "operationId": "movie_countries/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "country_id"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "country_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Movie_Countries"
+                ],
+                "summary": "Delete movie_countries",
+                "description": "-",
+                "operationId": "movie_countries/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_genres": {
+            "get": {
+                "tags": [
+                    "Movie_Genres"
+                ],
+                "summary": "Get List movie_genres Data",
+                "description": "enter your movie_genres here",
+                "operationId": "movie_genres",
+                "responses": {
+                    "default": {
+                        "description": "return array model movie_genres"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movie_Genres"
+                ],
+                "summary": "armovie_genrestists",
+                "description": "movie_genres",
+                "operationId": "Movie_Genres",
+                "requestBody": {
+                    "description": "form movie_genres",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "genre_id"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "genre_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_genres/{id}": {
+            "get": {
+                "tags": [
+                    "Movie_Genres"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "movie_genres/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Movie_Genres"
+                ],
+                "summary": "Update movie_genres",
+                "description": "-",
+                "operationId": "movie_genres/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "genre_id"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "genre_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Movie_Genres"
+                ],
+                "summary": "Delete movie_genres",
+                "description": "-",
+                "operationId": "movie_genres/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_languages": {
+            "get": {
+                "tags": [
+                    "Movie_Languages"
+                ],
+                "summary": "Get List Artists Data",
+                "description": "enter your Artists here",
+                "operationId": "movie_languages",
+                "responses": {
+                    "default": {
+                        "description": "return array model Artists"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movie_Languages"
+                ],
+                "summary": "movie_languages",
+                "description": "movie_languages",
+                "operationId": "Movie_Languages",
+                "requestBody": {
+                    "description": "form movie_languages",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "language_code"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "language_code": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_languages/{id}": {
+            "get": {
+                "tags": [
+                    "Movie_Languages"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "movie_languages/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Movie_Languages"
+                ],
+                "summary": "Update movie_languages",
+                "description": "-",
+                "operationId": "movie_languages/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "language_code"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "language_code": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Movie_Languages"
+                ],
+                "summary": "Delete movie_languages",
+                "description": "-",
+                "operationId": "movie_languages/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_photos": {
+            "get": {
+                "tags": [
+                    "Movie_Photos"
+                ],
+                "summary": "Get List movie_photos Data",
+                "description": "enter your movie_photos here",
+                "operationId": "Movie_Photos",
+                "responses": {
+                    "default": {
+                        "description": "return array model movie_photos"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movie_Photos"
+                ],
+                "summary": "movie_photos",
+                "description": "movie_photos",
+                "operationId": "movie_photos",
+                "requestBody": {
+                    "description": "form movie_photos",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "photo"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "photo": {
+                                        "type": "image"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_series": {
+            "get": {
+                "tags": [
+                    "Movie_Series"
+                ],
+                "summary": "Get List Data",
+                "description": "enter your  here",
+                "operationId": "movie_series",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movie_Series"
+                ],
+                "summary": "movie_series",
+                "description": "movie_series",
+                "operationId": "Movie_Series",
+                "requestBody": {
+                    "description": "form movie_series",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "season_number",
+                                    "episode_number"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "season_number": {
+                                        "type": "integer"
+                                    },
+                                    "episode_number": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_series/{id}": {
+            "get": {
+                "tags": [
+                    "Movie_Series"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "movie_series/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Movie_Series"
+                ],
+                "summary": "Delete movie_series",
+                "description": "-",
+                "operationId": "movie_series/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie_series{id}": {
+            "put": {
+                "tags": [
+                    "Movie_Series"
+                ],
+                "summary": "Update movie_series",
+                "description": "-",
+                "operationId": "movie_series/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "season_number",
+                                    "episode_number"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "season_number": {
+                                        "type": "integer"
+                                    },
+                                    "episode_number": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie-videos": {
+            "get": {
+                "tags": [
+                    "Movie-Videos"
+                ],
+                "summary": "Get List movie-videos Data",
+                "description": "enter your movie-videos here",
+                "operationId": "movie-videos",
+                "responses": {
+                    "default": {
+                        "description": "return array model movie-videos"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movie-Videos"
+                ],
+                "summary": "movie-videos",
+                "description": "'movie-videos",
+                "operationId": "'Movie-Videos",
+                "requestBody": {
+                    "description": "form movie-videos",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "movie_id",
+                                    "title",
+                                    "video"
+                                ],
+                                "properties": {
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "video": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/movie-videos/{id}": {
+            "get": {
+                "tags": [
+                    "Movie-Videos"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "movie-videos/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Movie-Videos"
+                ],
+                "summary": "Update movie-videos",
+                "description": "-",
+                "operationId": "movie-videos/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "video"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "video": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Movie-Videos"
+                ],
+                "summary": "Delete movie-videos",
+                "description": "-",
+                "operationId": "movie-videos/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/payments": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get List Artists Data",
+                "description": "enter your Artists here",
+                "operationId": "payments",
+                "responses": {
+                    "default": {
+                        "description": "return array model payments"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "payments",
+                "description": "payments",
+                "operationId": "Payments",
+                "requestBody": {
+                    "description": "form payments",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "subscription_plan_id",
+                                    "payment_status"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "subscription_plan_id": {
+                                        "type": "string"
+                                    },
+                                    "payment_status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/payments/{id}": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "payments/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Delete payments",
+                "description": "-",
+                "operationId": "payments/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/rated-movies": {
+            "get": {
+                "tags": [
+                    "Rated-Movies"
+                ],
+                "summary": "Get List rated-movies Data",
+                "description": "enter your rated-movies here",
+                "operationId": "rated-movies",
+                "responses": {
+                    "default": {
+                        "description": "return array model rated-movies"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Rated-Movies"
+                ],
+                "summary": "rated-movies",
+                "description": "rated-movies",
+                "operationId": "Rated-Movies",
+                "requestBody": {
+                    "description": "form rated-movies",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "movie_id",
+                                    "rated_value"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "rated_value": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/rated-movies/{id}": {
+            "get": {
+                "tags": [
+                    "Rated-Movies"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "rated-movies/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Rated-Movies"
+                ],
+                "summary": "Update rated-movies",
+                "description": "-",
+                "operationId": "rated-movies/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "movie_id",
+                                    "rated_value"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "movie_id": {
+                                        "type": "string"
+                                    },
+                                    "rated_value": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Rated-Movies"
+                ],
+                "summary": "Delete rated-movies",
+                "description": "-",
+                "operationId": "rated-movies/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/requested-movies": {
+            "get": {
+                "tags": [
+                    "Requested-Movies"
+                ],
+                "summary": "Get List requested-movies Data",
+                "description": "enter your requested-movies here",
+                "operationId": "requested-movies",
+                "responses": {
+                    "default": {
+                        "description": "return array model requested-movies"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Requested-Movies"
+                ],
+                "summary": "requested-movies",
+                "description": "requested-movies",
+                "operationId": "Requested-Movies",
+                "requestBody": {
+                    "description": "form requested-movies",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "title",
+                                    "description",
+                                    "image_path",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "artist_profile": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "image_path": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/requested-movies/{id}": {
+            "get": {
+                "tags": [
+                    "Requested-Movies"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "requested-movies/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Requested-Movies"
+                ],
+                "summary": "Update requested-movies",
+                "description": "-",
+                "operationId": "requested-movies/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "title",
+                                    "description",
+                                    "image_path",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "artist_profile": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "image_path": {
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Requested-Movies"
+                ],
+                "summary": "Delete requested-movies",
+                "description": "-",
+                "operationId": "requested-movies/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/requested-movie-responses": {
+            "get": {
+                "tags": [
+                    "Requested-Movie-Responses"
+                ],
+                "summary": "Get List requested-movie-responses Data",
+                "description": "enter your requested-movie-responses here",
+                "operationId": "requested-movie-responses",
+                "responses": {
+                    "default": {
+                        "description": "return array model requested-movie-responses"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Requested-Movie-Responses"
+                ],
+                "summary": "requested-movie-responses",
+                "description": "requested-movie-responses",
+                "operationId": "Requested-Movie-Responses",
+                "requestBody": {
+                    "description": "form requested-movie-responses",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "requested_movie_id",
+                                    "user_id",
+                                    "response_message",
+                                    "response_status"
+                                ],
+                                "properties": {
+                                    "requested_movie_id": {
+                                        "type": "string"
+                                    },
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "response_message": {
+                                        "type": "string"
+                                    },
+                                    "response_status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/requested-movie-responses/{id}": {
+            "get": {
+                "tags": [
+                    "Requested-Movie-Responses"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "requested-movie-responses/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Requested-Movie-Responses"
+                ],
+                "summary": "Update requested-movie-responses",
+                "description": "-",
+                "operationId": "requested-movie-responses/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "requested_movie_id",
+                                    "user_id",
+                                    "response_message",
+                                    "response_status"
+                                ],
+                                "properties": {
+                                    "requested_movie_id": {
+                                        "type": "string"
+                                    },
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "response_message": {
+                                        "type": "string"
+                                    },
+                                    "response_status": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Requested-Movie-Responses"
+                ],
+                "summary": "Delete requested-movie-responses",
+                "description": "-",
+                "operationId": "requested-movie-responses/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Get List roles Data",
+                "description": "enter your roles here",
+                "operationId": "roles",
+                "responses": {
+                    "default": {
+                        "description": "return array model roles"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "roles",
+                "description": "roles",
+                "operationId": "Roles",
+                "requestBody": {
+                    "description": "form roles",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "role_name"
+                                ],
+                                "properties": {
+                                    "role_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/roles/{id}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "roles/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Update roles",
+                "description": "-",
+                "operationId": "roles/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "role_name"
+                                ],
+                                "properties": {
+                                    "role_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Delete roles",
+                "description": "-",
+                "operationId": "roles/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/saved-movies": {
+            "post": {
+                "tags": [
+                    "Saved-Movies"
+                ],
+                "summary": "saved-movies",
+                "description": "saved-movies",
+                "operationId": "Saved-Movies",
+                "requestBody": {
+                    "description": "form saved-movies",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "movie_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "movie_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/saved-movies/{id}": {
+            "get": {
+                "tags": [
+                    "Saved-Movies"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "saved-movies/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Saved-Movies"
+                ],
+                "summary": "Update saved-movies",
+                "description": "-",
+                "operationId": "saved-movies/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "movie_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "movie_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Saved-Movies"
+                ],
+                "summary": "Delete saved-movies",
+                "description": "-",
+                "operationId": "saved-movies/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/subscription-plans": {
+            "get": {
+                "tags": [
+                    "Subscription-Plans"
+                ],
+                "summary": "Get List subscription-plans Data",
+                "description": "enter your subscription-plans here",
+                "operationId": "subscription-plans",
+                "responses": {
+                    "default": {
+                        "description": "return array model subscription-plans"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Subscription-Plans"
+                ],
+                "summary": "subscription-plans",
+                "description": "subscription-plans",
+                "operationId": "Subscription-Plans",
+                "requestBody": {
+                    "description": "form subscription-plans",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "subscription_plan_name",
+                                    "subscription_plan_description",
+                                    "subscription_plan_price",
+                                    "subscription_plan_duration"
+                                ],
+                                "properties": {
+                                    "subscription_plan_name": {
+                                        "type": "string"
+                                    },
+                                    "subscription_plan_description": {
+                                        "type": "string"
+                                    },
+                                    "subscription_plan_price": {
+                                        "type": "string"
+                                    },
+                                    "subscription_plan_duration": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/subscription-plans/{id}": {
+            "get": {
+                "tags": [
+                    "Subscription-Plans"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "subscription-plans/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Subscription-Plans"
+                ],
+                "summary": "Update subscription-plans",
+                "description": "-",
+                "operationId": "subscription-plans/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "subscription_plan_name",
+                                    "subscription_plan_description",
+                                    "subscription_plan_price",
+                                    "subscription_plan_duration"
+                                ],
+                                "properties": {
+                                    "subscription_plan_name": {
+                                        "type": "string"
+                                    },
+                                    "subscription_plan_description": {
+                                        "type": "string"
+                                    },
+                                    "subscription_plan_price": {
+                                        "type": "numeric"
+                                    },
+                                    "subscription_plan_duration": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Subscription-Plans"
+                ],
+                "summary": "Delete subscription-plans",
+                "description": "-",
+                "operationId": "subscription-plans/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/tv_shows": {
+            "get": {
+                "tags": [
+                    "Tv_Shows"
+                ],
+                "summary": "Get List Data",
+                "description": "enter your  here",
+                "operationId": "tv_shows",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tv_Shows"
+                ],
+                "summary": "tv_shows",
+                "description": "tv_shows",
+                "operationId": "Tv_Shows",
+                "requestBody": {
+                    "description": "form tv_shows",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tv_show_name"
+                                ],
+                                "properties": {
+                                    "tv_show_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/tv_shows/{id}": {
+            "get": {
+                "tags": [
+                    "Tv_Shows"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "tv_shows/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tv_Shows"
+                ],
+                "summary": "Delete artist",
+                "description": "-",
+                "operationId": "tv_shows/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/tv_shows{id}": {
+            "put": {
+                "tags": [
+                    "Tv_Shows"
+                ],
+                "summary": "Update artist",
+                "description": "-",
+                "operationId": "tv_shows/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "tv_show_name"
+                                ],
+                                "properties": {
+                                    "tv_show_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -363,6 +3445,146 @@
                     }
                 }
             }
+        },
+        "/api/years": {
+            "get": {
+                "tags": [
+                    "Years"
+                ],
+                "summary": "Get List years Data",
+                "description": "enter your years here",
+                "operationId": "years",
+                "responses": {
+                    "default": {
+                        "description": "return array model years"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Years"
+                ],
+                "summary": "years",
+                "description": "years",
+                "operationId": "Years",
+                "requestBody": {
+                    "description": "form years",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "year"
+                                ],
+                                "properties": {
+                                    "year": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/years/{id}": {
+            "get": {
+                "tags": [
+                    "Years"
+                ],
+                "summary": "Detail",
+                "description": "-",
+                "operationId": "years/GetById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "return model admin"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Years"
+                ],
+                "summary": "Update years",
+                "description": "-",
+                "operationId": "years/update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "form admin",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "year"
+                                ],
+                                "properties": {
+                                    "year": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Years"
+                ],
+                "summary": "Delete years",
+                "description": "-",
+                "operationId": "years/delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -388,6 +3610,13 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "Bearer": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     }
