@@ -55,14 +55,13 @@ class ArtistController extends MainController
      *      ),
      *    @OA\Response(response="200", description="Success"),
      *     security={{"Bearer":{}}}
-     *   
      * )
      */
     //Stroe
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'artist_name' => 'required|string|unique:artists',
+            'artist_name' => 'required|string',
             'artist_profile' => 'required|string',
             // 'artist_profile' => 'nullable|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
