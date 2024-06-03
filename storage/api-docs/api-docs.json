@@ -54,13 +54,18 @@
                     }
                 },
                 "responses": {
-                    "default": {
-                        "description": ""
+                    "200": {
+                        "description": "Success"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
-        "/api/artist/{id}": {
+        "/api/artists/{id}": {
             "get": {
                 "tags": [
                     "Artists"
@@ -91,7 +96,7 @@
                 ],
                 "summary": "Update artist",
                 "description": "-",
-                "operationId": "artist/update",
+                "operationId": "Artist/update",
                 "parameters": [
                     {
                         "name": "id",
@@ -127,10 +132,15 @@
                     }
                 },
                 "responses": {
-                    "default": {
-                        "description": ""
+                    "200": {
+                        "description": "Success"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -151,10 +161,15 @@
                     }
                 ],
                 "responses": {
-                    "default": {
-                        "description": ""
+                    "200": {
+                        "description": "Success"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
         "/api/signup": {
@@ -3598,25 +3613,10 @@
             }
         },
         "securitySchemes": {
-            "passport": {
-                "type": "oauth2",
-                "description": "Laravel passport oauth2 security.",
-                "in": "header",
-                "scheme": "https",
-                "flows": {
-                    "password": {
-                        "authorizationUrl": "http://localhost/oauth/authorize",
-                        "tokenUrl": "http://localhost/oauth/token",
-                        "refreshUrl": "http://localhost/token/refresh",
-                        "scopes": []
-                    }
-                }
-            },
-            "sanctum": {
-                "type": "apiKey",
-                "description": "Enter token in format (Bearer <token>)",
-                "name": "Authorization",
-                "in": "header"
+            "Bearer": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     }

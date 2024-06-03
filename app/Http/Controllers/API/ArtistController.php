@@ -53,11 +53,9 @@ class ArtistController extends MainController
  *              @OA\Property(property="artist_profile", type="string"),
  *          ),
  *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
+ *    @OA\Response(response="200", description="Success"),
+  *     security={{"Bearer":{}}}
+ *   
  * )
  */
     //Stroe
@@ -87,7 +85,7 @@ class ArtistController extends MainController
     }
 /**
      * @OA\Get(
-     *     path="/api/artist/{id}",
+     *     path="/api/artists/{id}",
      *     tags={"Artists"},
      *     summary="Detail",
      *     description="-",
@@ -121,11 +119,11 @@ class ArtistController extends MainController
     }
 /**
      * @OA\Put(
-     *     path="/api/artist/{id}",
+     *     path="/api/artists/{id}",
      *     tags={"Artists"},
      *     summary="Update artist",
      *     description="-",
-     *     operationId="artist/update",
+     *     operationId="Artist/update",
      *     @OA\Parameter(
      *          name="id",
      *          description="Id",
@@ -144,10 +142,8 @@ class ArtistController extends MainController
  *              @OA\Property(property="artist_profile", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *     @OA\Response(response="200", description="Success"),
+  *         security={{"Bearer":{}}}
      * )
      */
     //Update
@@ -182,7 +178,7 @@ class ArtistController extends MainController
     }
 /**
      * @OA\Delete(
-     *     path="/api/artist/{id}",
+     *     path="/api/artists/{id}",
      *     tags={"Artists"},
      *     summary="Delete artist",
      *     description="-",
@@ -196,10 +192,8 @@ class ArtistController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *      @OA\Response(response="200", description="Success"),
+  *         security={{"Bearer":{}}}
      * )
      */
     //Destroy

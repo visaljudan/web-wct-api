@@ -13,7 +13,14 @@ use Illuminate\Http\JsonResponse;
  *          email="srundavith@gmail.com"
  *      )
  * )
+ * * @OA\SecurityScheme(
+ *     type="http",
+ *     securityScheme="Bearer",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ * )
  */
+
 class MainController extends Controller
 {
     protected function sendSuccess($status = 200, $message = '', $data = [],): JsonResponse
