@@ -52,9 +52,8 @@ class GenreController extends MainController
      *              @OA\Property(property="genre_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *      @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *        
      *     )
      * )
@@ -136,9 +135,8 @@ class GenreController extends MainController
      *              @OA\Property(property="genre_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *      @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
@@ -184,9 +182,8 @@ class GenreController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */

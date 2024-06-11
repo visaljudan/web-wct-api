@@ -16,15 +16,13 @@ class RatedMovieController extends MainController
 {
     /**
      * @OA\Get(
-     *     path="/api/rated-movies",
+     *     path="/api/rated_movies",
      *     tags={"Rated-Movies"},
      *     summary="Get List rated-movies Data",
      *     description="enter your rated-movies here",
-     *     operationId="rated-movies",
-     *     @OA\Response(
-     *         response="default",
-     *         description="return array model rated-movies"
-     *     )
+     *     operationId="rated_movies",
+     *       @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
 
@@ -82,9 +80,8 @@ class RatedMovieController extends MainController
      *              @OA\Property(property="rated_value", type="integer"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *        
      *     )
      * )
@@ -245,10 +242,8 @@ class RatedMovieController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function destroy(Request $request, $id)

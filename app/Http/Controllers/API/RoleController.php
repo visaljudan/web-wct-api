@@ -52,11 +52,8 @@ class RoleController extends MainController
      *              @OA\Property(property="role_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *        
-     *     )
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function store(Request $request)
@@ -139,10 +136,8 @@ class RoleController extends MainController
      *              @OA\Property(property="role_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *    @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function update(Request $request, $id)
@@ -187,10 +182,8 @@ class RoleController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function destroy($id)

@@ -57,11 +57,8 @@ class SubscriptionPlanController extends MainController
      * @OA\Property(property="subscription_plan_duration", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *        
-     *     )
+     *    @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function store(Request $request)
@@ -156,10 +153,8 @@ class SubscriptionPlanController extends MainController
      * @OA\Property(property="subscription_plan_duration", type="integer"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *    @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function update(Request $request, $id)
@@ -220,10 +215,8 @@ class SubscriptionPlanController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *    @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function destroy(string $id)

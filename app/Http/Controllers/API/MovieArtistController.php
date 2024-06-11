@@ -56,9 +56,8 @@ class MovieArtistController extends MainController
      * @OA\Property(property="movie_artist_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
@@ -101,9 +100,8 @@ class MovieArtistController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description="return model admin"
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
@@ -146,9 +144,8 @@ class MovieArtistController extends MainController
      *              @OA\Property(property="movie_artist_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *      @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
@@ -197,9 +194,8 @@ class MovieArtistController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
