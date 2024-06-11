@@ -9,7 +9,6 @@ use App\Models\Movie;
 use App\Models\RatedMovie;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class RatedMovieController extends MainController

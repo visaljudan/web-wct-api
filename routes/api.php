@@ -121,6 +121,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/rated_movies/{id}', [RatedMovieController::class, 'show']);
     Route::delete('/rated_movies/{id}', [RatedMovieController::class, 'destroy']);
 
+    //Payments
+    Route::get('/payments', [PaymentController::class, 'index']);
+    Route::post('/payments', [PaymentController::class, 'store']);
+    Route::get('/payments/{id}', [PaymentController::class, 'show']);
+    Route::delete('/payments/{id}', [PaymentController::class, 'destroy']);
+    Route::post('/charge', [PaymentController::class, 'charge']);
+
     ///////////////////////////Not Done Yet/////////////////////////////////////
     ///////////////////////////Not Done Yet/////////////////////////////////////
     ///////////////////////////Not Done Yet/////////////////////////////////////
@@ -157,12 +164,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('requested-movie-responses/{id}', [RequestedMovieResponseController::class, 'update']);
     Route::delete('requested-movie-responses/{id}', [RequestedMovieResponseController::class, 'destroy']);
 
-    //Payments
-    Route::get('/payments', [PaymentController::class, 'index']);
-    Route::post('/payments', [PaymentController::class, 'store']);
-    Route::get('/payments/{id}', [PaymentController::class, 'show']);
-    Route::delete('/payments/{id}', [PaymentController::class, 'destroy']);
-    Route::post('/charge', [PaymentController::class, 'charge']);
+
 
     // //Movie Subscriptions 
     // Route::get('/movie_subscriptions', [MovieSubscriptionController::class, 'index']);

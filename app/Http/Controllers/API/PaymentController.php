@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\MainController;
-use App\Models\Movie;
 use App\Models\Payment;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Models\UserSubscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Stripe\Stripe;
 use Stripe\Charge;
@@ -19,19 +18,39 @@ class PaymentController extends MainController
 
     public function charge(Request $request)
     {
+        // Get the token from the request header
+        $token = $request->header('Authorization');
+
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Check if the user's role is "User" or "Admin"
+        if (!Gate::allows('adminUser', $user)) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $token = $request->stripeToken;
 
         // Define validation rules
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
             'card_number' => 'required|string',
             'expiry' => ['required', 'string', 'regex:/^(0[1-9]|1[0-2])\/\d{2}$/'],
             'cvv' => 'required|numeric|digits:3',
             'name' => 'nullable|string',
             'subscription_plan_id' => 'required|exists:subscription_plans,id',
-            'amount' => 'required|numeric',
             'description' => 'nullable|string',
             'stripeToken' => 'required|string',
         ]);
@@ -41,6 +60,14 @@ class PaymentController extends MainController
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
+        // Retrieve subscription plan
+        $subscriptionPlan = SubscriptionPlan::find($request->subscription_plan_id);
+        if (!$subscriptionPlan) {
+            return $this->sendError(404, 'Subscription plan not found');
+        }
+
+        $amount = $subscriptionPlan->subscription_plan_price;
+
         // Get the length of the card number
         $cardNumberLength = strlen($request->card_number);
 
@@ -49,12 +76,13 @@ class PaymentController extends MainController
 
         // Mask the digits before the last four with asterisks
         $maskedCardNumber = str_repeat('*', $cardNumberLength - 4) . $lastFourDigits;
+
         try {
             // Create charge using Stripe API
             $charge = \Stripe\Charge::create([
-                'amount' => $request->amount * 100, // Convert to cents
+                'amount' => $amount * 100, // Convert to cents
                 'currency' => 'usd',
-                'description' => $request->description, // Use provided description or default
+                'description' => $request->description ?? 'Subscription Charge', // Use provided description or default
                 'source' => $token,
             ]);
 
@@ -62,7 +90,7 @@ class PaymentController extends MainController
             if ($charge->status === "succeeded") {
                 // Create a payment record
                 $payment = Payment::create([
-                    'user_id' => $request->user_id,
+                    'user_id' => $user->id,
                     'subscription_plan_id' => $request->subscription_plan_id,
                     'payment_status' => 'Success',
                     'description' => $request->description,
@@ -74,25 +102,31 @@ class PaymentController extends MainController
                     'name' => $request->name,
                 ]);
 
-                // Update user's role to 'premium'
-                $user = User::find($request->user_id);
-                $user->role = 'User Subcription';
-                $user->save();
+                // Update user's role to 'User Subscription' if not Admin
+                if ($user->role !== 'Admin') {
+                    $user->role = 'User Subscription';
+                    $user->save();
+                }
 
                 // Store subscription details in user_subscription table
                 UserSubscription::create([
-                    'user_id' => $request->user_id,
+                    'user_id' => $user->id,
                     'subscription_plan_id' => $request->subscription_plan_id,
                     'subscription_start_date' => now(),
-                    'subscription_end_date' => now()->addMonths(1),
+                    'subscription_end_date' => now()->addDays(30),
                     'subscription_status' => 'running',
                 ]);
+
+                return $this->sendSuccess(200, 'Payment success', $payment);
+            } else {
+                return $this->sendError(500, 'Payment failed');
             }
-            return $this->sendSuccess(200, 'Payment success', $payment);
         } catch (\Exception $e) {
             return $this->sendError(500, 'Internal Server Error', $e->getMessage());
         }
     }
+
+
 
     /**
      * @OA\Get(

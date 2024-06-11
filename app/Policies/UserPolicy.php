@@ -51,4 +51,9 @@ class UserPolicy
     {
         return $user->role === "User Subscription"; // User role
     }
+
+    public function adminUser(User $user)
+    {
+        return in_array($user->role, ['User', 'Admin']);
+    }
 }
