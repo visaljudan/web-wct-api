@@ -11,7 +11,16 @@ class Payment extends Model
     protected $fillable = [
         'user_id',
         'subscription_plan_id',
-        'payment_status'
+        'card_number',
+        'expiry',
+        'cvv',
+        'name',
+        'description',
+        'stripeToken',
+        'transaction_id',
+        'payment_method',
+        'receipt_url',
+        'payment_status',
     ];
 
     // Define the relationship with the User model

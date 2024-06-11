@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             MovieSeriesSeeder::class,
             RatedMovieSeeder::class,
             SavedMovieSeeder::class,
-            SubscriptionUserSeeder::class,
+            // SubscriptionUserSeeder::class,
         ]);
     }
 }

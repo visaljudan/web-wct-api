@@ -13,11 +13,11 @@ class MovieArtistResource extends JsonResource
             'id' => $this->id,
             'movie_id' => $this->movie_id,
             'artist_id' => $this->artist_id,
-            'artist_name' => $this->artist->artist_name,
-            'artist_profile' => $this->artist->artist_profile,
+            'artist_name' => $this->artist->name,
+            'artist_profile_image' => $this->artist->profile_image,
+            'movie_artist_name' => $this->movie_artist_name,
             'role_id' => $this->role_id,
             'role_name' => $this->role->role_name,
-            'movie_artist_name' => $this->movie_artist_name,
         ];
     }
 }

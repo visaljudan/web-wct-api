@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscription_user', function (Blueprint $table) {
+        Schema::create('user_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('subscription_plan_id')->references('id')->on('subscription_plans')->onDelete('cascade');
             $table->date('subscription_start_date')->nullable()->default(null);
             $table->date('subscription_end_date')->nullable()->default(null);
-            $table->string('subscription_status', 20);
+            $table->string('subscription_status')->default('running');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscription_user');
+        Schema::dropIfExists('user_subscription');
     }
 };

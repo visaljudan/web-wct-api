@@ -12,55 +12,55 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class YearController extends MainController
-{  /**
-    * @OA\Get(
-    *     path="/api/years",
-    *     tags={"Years"},
-    *     summary="Get List years Data",
-    *     description="enter your years here",
-    *     operationId="years",
-    *     @OA\Response(
-    *         response="default",
-    *         description="return array model years"
-    *     )
-    * )
-    */
+{
+    /**
+     * @OA\Get(
+     *     path="/api/years",
+     *     tags={"Years"},
+     *     summary="Get List years Data",
+     *     description="enter your years here",
+     *     operationId="years",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model years"
+     *     )
+     * )
+     */
     // Index
     public function index()
     {
-        $years = Year::all();
+        $years = Year::orderBy('id', 'desc')->get();
 
-        if ($years->count() > 0) {
+            if ($years->count() > 0) {
             $res = new YearResourceCollection($years);
             return $this->sendSuccess(200, 'Years found!', $res);
         } else {
             return $this->sendError('No Record Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/years",
- *     tags={"Years"},
- *     summary="years",
- *     description="years",
- *     operationId="Years",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form years",
- *          @OA\JsonContent(
- *            required={"year"},
- *              @OA\Property(property="year", type="integer"),
- *             
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    // Store
+    /**
+     * @OA\Post(
+     *     path="/api/years",
+     *     tags={"Years"},
+     *     summary="years",
+     *     description="years",
+     *     operationId="Years",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form years",
+     *          @OA\JsonContent(
+     *            required={"year"},
+     *              @OA\Property(property="year", type="integer"),
+     *             
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -82,7 +82,7 @@ class YearController extends MainController
         $res = new YearResource($year);
         return $this->sendSuccess(201, 'Year created successfully', $res);
     }
-/**
+    /**
      * @OA\Get(
      *     path="/api/years/{id}",
      *     tags={"Years"},
@@ -119,7 +119,7 @@ class YearController extends MainController
         $res = new YearResource($year);
         return $this->sendSuccess(200, 'Year found', $res);
     }
-/**
+    /**
      * @OA\Put(
      *     path="/api/years/{id}",
      *     tags={"Years"},
@@ -140,8 +140,8 @@ class YearController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"year"},
- *              @OA\Property(property="year", type="integer"),
- *             
+     *              @OA\Property(property="year", type="integer"),
+     *             
      *          ),
      *      ),
      *     @OA\Response(
@@ -177,7 +177,7 @@ class YearController extends MainController
         $res = new YearResource($year);
         return $this->sendSuccess(200, 'Year updated successfully', $res);
     }
-/**
+    /**
      * @OA\Delete(
      *     path="/api/years/{id}",
      *     tags={"Years"},

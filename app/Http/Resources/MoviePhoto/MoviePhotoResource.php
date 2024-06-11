@@ -12,7 +12,7 @@ class MoviePhotoResource extends JsonResource
         return [
             'id' => $this->id,
             'movie_id' => $this->movie_id,
-            'photo_path' => $this->photo_path,
+            'photo_image' => $this->photo_image,
         ];
     }
 }

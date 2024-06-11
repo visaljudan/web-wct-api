@@ -2,86 +2,83 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\MessageSent;
 use App\Http\Controllers\MainController;
 use App\Http\Resources\Movie\MovieResource;
 use App\Models\Movie;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Events\NewMovieEvent;
+use App\Http\Resources\Movie\MovieResourceCollection;
+use App\Http\Resources\MovieGenre\MovieGenreResourceCollection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redis;
 
 class MovieController extends MainController
 {
     /**
- * @OA\Get(
- *     path="/api/movies",
- *     tags={"Movies"},
- *     summary="Get List movies Data",
- *     description="enter your movies here",
- *     operationId="movies",
- *     @OA\Response(
- *         response="default",
- *         description="return array model movies"
- *     )
- * )
- */
- 
+     * @OA\Get(
+     *     path="/api/movies",
+     *     tags={"Movies"},
+     *     summary="Get List movies Data",
+     *     description="enter your movies here",
+     *     operationId="movies",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model movies"
+     *     )
+     * )
+     */
+
     public function index()
     {
         $movies = Movie::all();
 
         if ($movies->count() > 0) {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 200,
-                'movies' => $movies
-            ], 200);
+            $res = new MovieResourceCollection($movies);
+            return $this->sendSuccess(200, 'Movie found', $res);
         } else {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 400,
-                'message' => 'No Record Found'
-            ], 400);
+            return $this->sendError(400, 'No Record Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/movies",
- *     tags={"Movies"},
- *     summary="movies",
- *     description="movies",
- *     operationId="Movies",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form movies",
- *          @OA\JsonContent(
- *            required={"title", "overview", "run_time", "release_date", "total_likes", "total_ratings",
- *                      "average_rating", "poster_image", "cover_image", "trailer_url", "last_upload_date",
- *                       "subscription_only", "expired_subscription_only"},
- *              @OA\Property(property="title", type="string"),
- *              @OA\Property(property="overview", type="string"),
-                * @OA\Property(property="run_time", type="integer"),
-                * @OA\Property(property="release_date", type="date"),
-                 *@OA\Property(property="total_likes", type="integer"),
-                * @OA\Property(property="total_ratings", type="integer"),
-                * @OA\Property(property="average_rating", type="string"),
-                * @OA\Property(property="poster_image", type="string"),
-                * @OA\Property(property="cover_image", type="string"),
-                *@OA\Property(property="trailer_url", type="string"),
-                *@OA\Property(property="last_upload_date", type="date"),
-                *@OA\Property(property="subscription_only", type="string"),
-                *@OA\Property(property="expired_subscription_only", type="date"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
+    /**
+     * @OA\Post(
+     *     path="/api/movies",
+     *     tags={"Movies"},
+     *     summary="movies",
+     *     description="movies",
+     *     operationId="Movies",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form movies",
+     *          @OA\JsonContent(
+     *            required={"title", "overview", "run_time", "release_date", "total_likes", "total_ratings",
+     *                      "average_rating", "poster_image", "cover_image", "trailer_url", "last_upload_date",
+     *                       "subscription_only", "expired_subscription_only"},
+     *              @OA\Property(property="title", type="string"),
+     *              @OA\Property(property="overview", type="string"),
+     * @OA\Property(property="run_time", type="integer"),
+     * @OA\Property(property="release_date", type="date"),
+     *@OA\Property(property="total_likes", type="integer"),
+     * @OA\Property(property="total_ratings", type="integer"),
+     * @OA\Property(property="average_rating", type="string"),
+     * @OA\Property(property="poster_image", type="string"),
+     * @OA\Property(property="cover_image", type="string"),
+     *@OA\Property(property="trailer_url", type="string"),
+     *@OA\Property(property="last_upload_date", type="date"),
+     *@OA\Property(property="subscription_only", type="string"),
+     *@OA\Property(property="expired_subscription_only", type="date"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -101,26 +98,19 @@ class MovieController extends MainController
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->sendError(422, 'Validation failed', $validator->errors());
+        }
+
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
         }
 
         $movie = Movie::create($request->all());
 
-        $this->notifyNewMovie($movie);
-
-        return response()->json([
-            'success' => true,
-            'statusCode' => 201,
-            'message' => 'Movie created successfully',
-            'movie' => $movie,
-        ], 201);
+        $res = new MovieResource($movie);
+        return $this->sendSuccess(201, 'Movie created successfully', $res);
     }
-/**
+    /**
      * @OA\Get(
      *     path="/api/movies/{id}",
      *     tags={"Movies"},
@@ -142,9 +132,6 @@ class MovieController extends MainController
      *     )
      * )
      */
-    // /**
-    //  * Display the specified resource.
-    //  */
     public function show($id)
     {
         $movie = Movie::find($id);
@@ -154,9 +141,9 @@ class MovieController extends MainController
         }
 
         $res = new MovieResource($movie);
-        return $this->sendSuccess(200, "Movie have found", $res);
+        return $this->sendSuccess(200, "Movie found", $res);
     }
-/**
+    /**
      * @OA\Put(
      *     path="/api/movies/{id}",
      *     tags={"Movies"},
@@ -177,21 +164,21 @@ class MovieController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"title", "overview", "run_time", "release_date", "total_likes", "total_ratings",
- *                      "average_rating", "poster_image", "cover_image", "trailer_url", "last_upload_date",
- *                       "subscription_only", "expired_subscription_only"},
- *              @OA\Property(property="title", type="string"),
- *              @OA\Property(property="overview", type="string"),
-                * @OA\Property(property="run_time", type="integer"),
-                * @OA\Property(property="release_date", type="date"),
-                 *@OA\Property(property="total_likes", type="integer"),
-                * @OA\Property(property="total_ratings", type="integer"),
-                * @OA\Property(property="average_rating", type="string"),
-                * @OA\Property(property="poster_image", type="string"),
-                * @OA\Property(property="cover_image", type="string"),
-                *@OA\Property(property="trailer_url", type="string"),
-                *@OA\Property(property="last_upload_date", type="date"),
-                *@OA\Property(property="subscription_only", type="string"),
-                *@OA\Property(property="expired_subscription_only", type="date"),
+     *                      "average_rating", "poster_image", "cover_image", "trailer_url", "last_upload_date",
+     *                       "subscription_only", "expired_subscription_only"},
+     *              @OA\Property(property="title", type="string"),
+     *              @OA\Property(property="overview", type="string"),
+     * @OA\Property(property="run_time", type="integer"),
+     * @OA\Property(property="release_date", type="date"),
+     *@OA\Property(property="total_likes", type="integer"),
+     * @OA\Property(property="total_ratings", type="integer"),
+     * @OA\Property(property="average_rating", type="string"),
+     * @OA\Property(property="poster_image", type="string"),
+     * @OA\Property(property="cover_image", type="string"),
+     *@OA\Property(property="trailer_url", type="string"),
+     *@OA\Property(property="last_upload_date", type="date"),
+     *@OA\Property(property="subscription_only", type="string"),
+     *@OA\Property(property="expired_subscription_only", type="date"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -200,19 +187,12 @@ class MovieController extends MainController
      *     )
      * )
      */
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
     public function update(Request $request, $id)
     {
         $movie = Movie::find($id);
 
         if (!$movie) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Movie not found',
-            ], 404);
+            return $this->sendError(404, 'Movie not found');
         }
 
         $validator = Validator::make($request->all(), [
@@ -232,24 +212,19 @@ class MovieController extends MainController
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->sendError(422, 'Validation failed', $validator->errors());
+        }
+
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
         }
 
         $movie->update($request->all());
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'message' => 'Movie updated successfully',
-            'movie' => $movie,
-        ], 200);
+        $res = new MovieResource($movie);
+        return $this->sendSuccess(200, 'Movie updated successfully', $res);
     }
-/**
+    /**
      * @OA\Delete(
      *     path="/api/movies/{id}",
      *     tags={"Movies"},
@@ -271,28 +246,17 @@ class MovieController extends MainController
      *     )
      * )
      */
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
     public function destroy($id)
     {
         $movie = Movie::find($id);
 
         if (!$movie) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Movie not found',
-            ], 404);
+            return $this->sendError(404, 'Movie not found');
         }
 
         $movie->delete();
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'message' => 'Movie deleted successfully',
-        ], 200);
+        return $this->sendSuccess(2000, 'Movie deleted successfully');
     }
 
     public function latest()
@@ -300,18 +264,11 @@ class MovieController extends MainController
         $latestMovies = Movie::orderBy('release_date', 'desc')->get();
 
         if ($latestMovies->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'No latest movies found',
-            ], 404);
+            return $this->sendError(404, 'No latest movies found');
         }
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'latest_movies' => $latestMovies,
-        ], 200);
+        $res = new MovieResourceCollection($latestMovies);
+        return $this->sendSuccess(200, 'Latest movies found', $latestMovies);
     }
 
     public function popular()
@@ -319,51 +276,65 @@ class MovieController extends MainController
         $popularMovies = Movie::orderBy('popularity', 'desc')->get();
 
         if ($popularMovies->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'No popular movies found',
-            ], 404);
+            return $this->sendError(404, 'No popular movies found');
         }
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'popular_movies' => $popularMovies,
-        ], 200);
+        $res = new MovieResourceCollection($popularMovies);
+        return $this->sendSuccess(200, 'Latest movies found', $res);
     }
 
-    public function related($id)
+    public function topRated()
     {
-        $movie = Movie::find($id);
-
-        if (!$movie) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Movie not found',
-            ], 404);
-        }
-
-        // Example: Get related movies with the same genre
-        $relatedMovies = Movie::where('genre', $movie->genre)
-            ->where('id', '!=', $id) // Exclude the current movie
-            ->take(5) // Limit the number of related movies
+        $topRatedMovies = Movie::orderBy('average_rating', 'desc')
+            ->orderBy('total_ratings', 'desc')
             ->get();
 
-        if ($relatedMovies->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'No related movies found',
-            ], 404);
+        if ($topRatedMovies->isEmpty()) {
+            return $this->sendError(404, 'No top-rated movies found');
         }
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'related_movies' => $relatedMovies,
-        ], 200);
+        $res = new MovieResourceCollection($topRatedMovies);
+        return $this->sendSuccess(200, 'Top-rated movies retrieved successfully', $res);
+    }
+
+
+    public function tvShow($tvShowId)
+    {
+        $movies = Movie::where('tv_show_id', $tvShowId)->get();
+
+        if ($movies->isEmpty()) {
+            return $this->sendError(404, 'TV Show genres not found');
+        }
+
+        $res = new MovieResourceCollection($movies);
+        return $this->sendSuccess(200, 'TV Show Genres Found', $res);
+    }
+
+
+    public function year($year)
+    {
+        // Log the year input for debugging
+        Log::info('Year input: ' . $year);
+
+        // Fetch movies where the release_date year matches the input year
+        $movies = Movie::whereYear('release_date', $year)->get();
+
+        // Log the count of movies found
+        Log::info('Movies found: ' . $movies->count());
+
+        // Check if movies collection is empty
+        if ($movies->isEmpty()) {
+            return $this->sendError(404, 'Movies from this year not found');
+        }
+
+        // Create a resource collection of the found movies
+        $res = new MovieResourceCollection($movies);
+
+        // Log the success response
+        Log::info('Success response: Movies from this year found');
+
+        // Return the success response
+        return $this->sendSuccess(200, 'Movies from this year found', $movies);
     }
 
     public function suggestMovies(Request $request)
@@ -409,15 +380,104 @@ class MovieController extends MainController
             'suggested_movies' => $suggestedMovies,
         ], 200);
     }
-    protected function notifyNewMovie($movie)
+
+
+    public function related($id)
     {
-        $subscribedUsers = User::where('subscribed', true)
-            ->where('preferred_genre', $movie->genre)
+        $movie = Movie::find($id);
+
+        if (!$movie) {
+            return response()->json([
+                'success' => false,
+                'statusCode' => 404,
+                'message' => 'Movie not found',
+            ], 404);
+        }
+
+        // Example: Get related movies with the same genre
+        $relatedMovies = Movie::where('genre', $movie->genre)
+            ->where('id', '!=', $id) // Exclude the current movie
+            ->take(5) // Limit the number of related movies
             ->get();
 
-        foreach ($subscribedUsers as $user) {
-            // Send notification to each user   
-            // $user->notify(new NewMovieNotification($movie));
+        if ($relatedMovies->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'statusCode' => 404,
+                'message' => 'No related movies found',
+            ], 404);
         }
+
+        return response()->json([
+            'success' => true,
+            'statusCode' => 200,
+            'related_movies' => $relatedMovies,
+        ], 200);
+    }
+
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $query = strtolower($query); // Convert search query to lowercase
+
+        $movies = Movie::whereRaw('LOWER(title) LIKE ?', ['%' . $query . '%'])->get();
+
+        if ($movies->isEmpty()) {
+            return $this->sendError(404, 'No movies found matching the criteria');
+        }
+
+        $res = new MovieResourceCollection($movies);
+        return $this->sendSuccess(200, 'Movies found', $res);
+    }
+
+
+    public function filter(Request $request)
+    {
+        // Validate the search request
+        $request->validate([
+            'title' => 'nullable|string',
+            'genre' => 'nullable|string',
+            'director' => 'nullable|string',
+            'release_year' => 'nullable|integer',
+            'rating' => 'nullable|numeric|min:0|max:10',
+        ]);
+
+        // Build the query based on provided parameters
+        $query = Movie::query();
+
+        if ($request->has('title')) {
+            $query->where('title', 'like', '%' . $request->input('title') . '%');
+        }
+
+        if ($request->has('genre')) {
+            $query->where('genre', 'like', '%' . $request->input('genre') . '%');
+        }
+
+        if ($request->has('year')) {
+            $query->where('director', 'like', '%' . $request->input('director') . '%');
+        }
+
+        if ($request->has('release_year')) {
+            $query->whereYear('release_date', $request->input('release_year'));
+        }
+
+        if ($request->has('rating')) {
+            $query->where('average_rating', '>=', $request->input('rating'));
+        }
+
+        // Get the results
+        $movies = $query->get();
+
+        // Check if any movies were found
+        if ($movies->isEmpty()) {
+            return $this->sendError(404, 'No movies found matching the criteria');
+        }
+
+        // Create a resource collection of the found movies
+        $res = new MovieResourceCollection($movies);
+
+        // Return the success response
+        return $this->sendSuccess(200, 'Movies found', $res);
     }
 }

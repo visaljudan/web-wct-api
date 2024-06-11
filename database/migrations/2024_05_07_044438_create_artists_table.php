@@ -6,22 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('artists', function (Blueprint $table) {
             $table->id();
-            $table->string("artist_name");
-            $table->string('artist_profile')->nullable();
+            $table->string('name');
+            $table->string('profile_image_file')->nullable();
+            $table->string('profile_image_url')->nullable();
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('artists');

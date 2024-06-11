@@ -10,6 +10,7 @@ class MovieLanguageResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'movie_id' => $this->movie_id,
             'language_code' => $this->language_code,
         ];

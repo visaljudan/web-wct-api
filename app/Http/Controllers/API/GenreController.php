@@ -1,5 +1,5 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
@@ -12,55 +12,53 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class GenreController extends MainController
-{   /**
-    * @OA\Get(
-    *     path="/api/genres",
-    *     tags={"Genres"},
-    *     summary="Get List genres Data",
-    *     description="enter your genres here",
-    *     operationId="genres",
-    *     @OA\Response(
-    *         response="default",
-    *         description="return array model genres"
-    *     )
-    * )
-    */
-    //Index
+{
+    /**
+     * @OA\Get(
+     *     path="/api/genres",
+     *     tags={"Genres"},
+     *     summary="Get List genres Data",
+     *     description="enter your genres here",
+     *     operationId="genres",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model genres"
+     *     )
+     * )
+     */
     public function index()
     {
         $genres = Genre::all();
 
         if ($genres->count() > 0) {
-
             $res = new GenreResourceCollection($genres);
             return $this->sendSuccess(200, 'Genres found!', $res);
         } else {
             return $this->sendError('No Record Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/genres",
- *     tags={"Genres"},
- *     summary="genres",
- *     description="genres",
- *     operationId="Genres",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form genres",
- *          @OA\JsonContent(
- *            required={"genre_name"},
- *              @OA\Property(property="genre_name", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    //Store
+    /**
+     * @OA\Post(
+     *     path="/api/genres",
+     *     tags={"Genres"},
+     *     summary="genres",
+     *     description="genres",
+     *     operationId="Genres",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form genres",
+     *          @OA\JsonContent(
+     *            required={"genre_name"},
+     *              @OA\Property(property="genre_name", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
 
@@ -69,21 +67,19 @@ class GenreController extends MainController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError(422, 'No Record Found', $validator->errors());
+            return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
-        $genre = Genre::create([
-            'genre_name' => $request->genre_name,
-        ]);
+        $genre = Genre::create($request->all());
 
         $res = new GenreResource($genre);
         return $this->sendSuccess(201, 'Genre created successfully', $res);
     }
-/**
+    /**
      * @OA\Get(
      *     path="/api/genres/{id}",
      *     tags={"Genres"},
@@ -105,22 +101,18 @@ class GenreController extends MainController
      *     )
      * )
      */
-    //Show
     public function show($id)
     {
-        // Find the genre by ID
         $genre = Genre::find($id);
 
-        // If genre not found, return error response
         if (!$genre) {
             return $this->sendError(404, 'Genre not found');
         }
 
-        // Return the genre data
         $res = new GenreResource($genre);
         return $this->sendSuccess(200, 'Genre found', $res);
     }
-/**
+    /**
      * @OA\Put(
      *     path="/api/genres/{id}",
      *     tags={"Genres"},
@@ -141,7 +133,7 @@ class GenreController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"genre_name"},
- *              @OA\Property(property="genre_name", type="string"),
+     *              @OA\Property(property="genre_name", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -150,9 +142,6 @@ class GenreController extends MainController
      *     )
      * )
      */
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
     public function update(Request $request, $id)
     {
         $genre = Genre::find($id);
@@ -161,9 +150,8 @@ class GenreController extends MainController
             return $this->sendError(404, 'Genre not found');
         }
 
-
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
         $validator = Validator::make($request->all(), [
@@ -180,7 +168,7 @@ class GenreController extends MainController
         $res = new GenreResource($genre);
         return $this->sendSuccess(200, 'Genre updated successfully', $res);
     }
-/**
+    /**
      * @OA\Delete(
      *     path="/api/genres/{id}",
      *     tags={"Genres"},
@@ -202,9 +190,6 @@ class GenreController extends MainController
      *     )
      * )
      */
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
     public function destroy($id)
     {
         $genre = Genre::find($id);
@@ -218,7 +203,6 @@ class GenreController extends MainController
         }
 
         $genre->delete();
-
         return $this->sendError(200, 'Genre deleted successfully');
     }
 }

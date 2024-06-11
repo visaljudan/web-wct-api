@@ -25,7 +25,12 @@ class RoleSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'role_name' => 'Screenwriter',
+                'role_name' => 'Main Actor',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'role_name' => 'Second Actor',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -35,42 +40,7 @@ class RoleSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'role_name' => 'Cinematographer',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'role_name' => 'Editor',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'role_name' => 'Composer',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'role_name' => 'Production Designer',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'role_name' => 'Sound Designer',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'role_name' => 'Costume Designer',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'role_name' => 'Makeup Artist',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'role_name' => 'Casting Director',
+                'role_name' => 'Extra Actor',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

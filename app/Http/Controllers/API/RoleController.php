@@ -1,5 +1,5 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
@@ -12,20 +12,20 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class RoleController extends MainController
-{ /**
-    * @OA\Get(
-    *     path="/api/roles",
-    *     tags={"Roles"},
-    *     summary="Get List roles Data",
-    *     description="enter your roles here",
-    *     operationId="roles",
-    *     @OA\Response(
-    *         response="default",
-    *         description="return array model roles"
-    *     )
-    * )
-    */
-    //index
+{
+    /**
+     * @OA\Get(
+     *     path="/api/roles",
+     *     tags={"Roles"},
+     *     summary="Get List roles Data",
+     *     description="enter your roles here",
+     *     operationId="roles",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model roles"
+     *     )
+     * )
+     */
     public function index()
     {
         $roles = Role::all();
@@ -36,29 +36,29 @@ class RoleController extends MainController
             return $this->sendError(400, "No Record Found");
         }
     }
-/**
- * @OA\Post(
- *     path="/api/roles",
- *     tags={"Roles"},
- *     summary="roles",
- *     description="roles",
- *     operationId="Roles",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form roles",
- *          @OA\JsonContent(
- *            required={"role_name"},
- *              @OA\Property(property="role_name", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    //Store
+
+    /**
+     * @OA\Post(
+     *     path="/api/roles",
+     *     tags={"Roles"},
+     *     summary="roles",
+     *     description="roles",
+     *     operationId="Roles",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form roles",
+     *          @OA\JsonContent(
+     *            required={"role_name"},
+     *              @OA\Property(property="role_name", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -70,7 +70,7 @@ class RoleController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
         $role = Role::create([
@@ -80,7 +80,8 @@ class RoleController extends MainController
         $res = new RoleResource($role);
         return $this->sendSuccess(201, "Role created successfully", $res);
     }
-/**
+
+    /**
      * @OA\Get(
      *     path="/api/roles/{id}",
      *     tags={"Roles"},
@@ -102,7 +103,6 @@ class RoleController extends MainController
      *     )
      * )
      */
-
     public function show($id)
     {
         $role = Role::find($id);
@@ -115,7 +115,7 @@ class RoleController extends MainController
         $res = new RoleResource($role);
         return $this->sendSuccess(200, "Role Found", $res);
     }
-/**
+    /**
      * @OA\Put(
      *     path="/api/roles/{id}",
      *     tags={"Roles"},
@@ -136,7 +136,7 @@ class RoleController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"role_name"},
- *              @OA\Property(property="role_name", type="string"),
+     *              @OA\Property(property="role_name", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -145,7 +145,6 @@ class RoleController extends MainController
      *     )
      * )
      */
-    //Update
     public function update(Request $request, $id)
     {
         $role = Role::find($id);
@@ -163,7 +162,7 @@ class RoleController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
         $role->role_name = $request->role_name;
@@ -171,7 +170,8 @@ class RoleController extends MainController
         $res = new RoleResource($role);
         return $this->sendSuccess(200, 'Role updated successfully', $res);
     }
-/**
+
+    /**
      * @OA\Delete(
      *     path="/api/roles/{id}",
      *     tags={"Roles"},
@@ -193,7 +193,6 @@ class RoleController extends MainController
      *     )
      * )
      */
-    //Destroy
     public function destroy($id)
     {
         $role = Role::find($id);
@@ -203,7 +202,7 @@ class RoleController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
         $role->delete();

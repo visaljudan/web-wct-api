@@ -20,6 +20,18 @@ class MovieCountrySeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'movie_id' => 2,
+                'country_code' => 'KR',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'movie_id' => 3,
+                'country_code' => 'US',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
             // Add more movie-country associations as needed
         ]);
     }

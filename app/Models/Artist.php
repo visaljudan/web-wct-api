@@ -9,7 +9,13 @@ class Artist extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'artist_name',
-        'artist_profile',
+        'name',
+        'profile_image_file',
+        'profile_image_url',
     ];
+
+    public function getProfileImageAttribute()
+    {
+        return $this->profile_image_url ?: $this->profile_image_file;
+    }
 }

@@ -1,5 +1,5 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
@@ -13,20 +13,19 @@ use Illuminate\Support\Facades\Validator;
 
 class MovieGenreController extends MainController
 {
-     /**
- * @OA\Get(
- *     path="/api/movie_genres",
- *     tags={"Movie_Genres"},
- *     summary="Get List movie_genres Data",
- *     description="enter your movie_genres here",
- *     operationId="movie_genres",
- *     @OA\Response(
- *         response="default",
- *         description="return array model movie_genres"
- *     )
- * )
- */
-    //Index
+    /**
+     * @OA\Get(
+     *     path="/api/movie_genres",
+     *     tags={"Movie_Genres"},
+     *     summary="Get List movie_genres Data",
+     *     description="enter your movie_genres here",
+     *     operationId="movie_genres",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model movie_genres"
+     *     )
+     * )
+     */
     public function index()
     {
         $movieGenres = MovieGenre::all();
@@ -38,30 +37,30 @@ class MovieGenreController extends MainController
             return $this->sendError(400, 'No Recod Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/movie_genres",
- *     tags={"Movie_Genres"},
- *     summary="armovie_genrestists",
- *     description="movie_genres",
- *     operationId="Movie_Genres",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form movie_genres",
- *          @OA\JsonContent(
- *            required={"movie_id", "genre_id"},
- *              @OA\Property(property="movie_id", type="string"),
- *              @OA\Property(property="genre_id", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    //Store
+
+    /**
+     * @OA\Post(
+     *     path="/api/movie_genres",
+     *     tags={"Movie_Genres"},
+     *     summary="armovie_genrestists",
+     *     description="movie_genres",
+     *     operationId="Movie_Genres",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form movie_genres",
+     *          @OA\JsonContent(
+     *            required={"movie_id", "genre_id"},
+     *              @OA\Property(property="movie_id", type="string"),
+     *              @OA\Property(property="genre_id", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -82,7 +81,8 @@ class MovieGenreController extends MainController
         $res = new MovieGenreResource($movieGenre);
         return $this->sendSuccess(201, 'Movie genre created successfully', $res);
     }
-/**
+
+    /**
      * @OA\Get(
      *     path="/api/movie_genres/{id}",
      *     tags={"Movie_Genres"},
@@ -104,20 +104,19 @@ class MovieGenreController extends MainController
      *     )
      * )
      */
-    //show
-    public function show($movieId)
+    public function show($id)
     {
-        $movieGenres = MovieGenre::where('movie_id', $movieId)->get();
+        $movieGenres = MovieGenre::find($id);
 
-        if ($movieGenres->isEmpty()) {
-            return $this->sendSuccess(404, 'Movie genres not found');
+        if (!$movieGenres) {
+            return $this->sendError(404, 'Movie genres not found');
         }
 
-        $res = new MovieGenreResourceCollection($movieGenres);
+        $res = new MovieGenreResource($movieGenres);
         return $this->sendSuccess(200, 'Movie Genres Found', $res);
     }
 
-/**
+    /**
      * @OA\Put(
      *     path="/api/movie_genres/{id}",
      *     tags={"Movie_Genres"},
@@ -138,8 +137,8 @@ class MovieGenreController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"movie_id", "genre_id"},
- *              @OA\Property(property="movie_id", type="string"),
- *              @OA\Property(property="genre_id", type="string"),
+     *              @OA\Property(property="movie_id", type="string"),
+     *              @OA\Property(property="genre_id", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -148,7 +147,6 @@ class MovieGenreController extends MainController
      *     )
      * )
      */
-    //Update
     public function update(Request $request, $id)
     {
         $movieGenre = MovieGenre::find($id);
@@ -175,7 +173,8 @@ class MovieGenreController extends MainController
         $res = new MovieGenreResource($movieGenre);
         return $this->sendSuccess(200, 'Movie genre updated successfully', $res);
     }
-/**
+
+    /**
      * @OA\Delete(
      *     path="/api/movie_genres/{id}",
      *     tags={"Movie_Genres"},
@@ -197,7 +196,6 @@ class MovieGenreController extends MainController
      *     )
      * )
      */
-    //Destroy
     public function destroy($id)
     {
         $movieGenre = MovieGenre::find($id);
@@ -215,21 +213,27 @@ class MovieGenreController extends MainController
         return $this->sendSuccess(200, 'Movie genre deleted successfully');
     }
 
-    //Index movie by genre id
-    public function movies($genreId)
+    public function movieIdGerne($movieId)
     {
-        $movie = MovieGenre::where('genre_id', $genreId)->get();
+        $movies = MovieGenre::where('movie_id', $movieId)->get();
 
-        if (!$movie) {
-            return $this->sendSuccess(404, 'Movie genres not found');
+        if ($movies->isEmpty()) {
+            return $this->sendError(404, 'No movies found in this genre.');
         }
 
-        $movies = $movie->pluck('movie');
-        $additionalData = $movies->pluck('title');
+        $res = new MovieGenreResourceCollection($movies);
+        return $this->sendSuccess(200, 'Movie Genres Found', $res);
+    }
 
+    public function genreIdMovie($genreId)
+    {
+        $movieGenres = MovieGenre::where('genre_id', $genreId)->get();
 
+        if ($movieGenres->isEmpty()) {
+            return $this->sendError(404, 'Movie genres not found');
+        }
 
-        $res = new MovieGenreResourceCollection($movie,  $additionalData);
+        $res = new MovieGenreResourceCollection($movieGenres);
         return $this->sendSuccess(200, 'Movie Genres Found', $res);
     }
 }

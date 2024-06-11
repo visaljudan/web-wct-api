@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('role', 20)->default("User");
             $table->string('profile')->default("https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png");
             $table->string('api_token')->nullable()->unique();
-          
+
             $table->timestamps();
         });
     }

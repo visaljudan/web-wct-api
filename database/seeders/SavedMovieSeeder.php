@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\DB;
 
 class SavedMovieSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         DB::table('saved_movies')->insert([

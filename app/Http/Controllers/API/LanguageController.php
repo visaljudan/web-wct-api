@@ -1,5 +1,5 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
@@ -13,20 +13,20 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class LanguageController extends MainController
-{    /**
-    * @OA\Get(
-    *     path="/api/languages",
-    *     tags={"Languages"},
-    *     summary="Get List Data",
-    *     description="enter your  here",
-    *     operationId="languages",
-    *     @OA\Response(
-    *         response="default",
-    *         description=""
-    *     )
-    * )
-    */
-    //Index
+{
+    /**
+     * @OA\Get(
+     *     path="/api/languages",
+     *     tags={"Languages"},
+     *     summary="Get List Data",
+     *     description="enter your  here",
+     *     operationId="languages",
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     public function index()
     {
         $languages = Language::all();
@@ -38,34 +38,33 @@ class LanguageController extends MainController
             return $this->sendError(400, 'No Record Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/languages",
- *     tags={"Languages"},
- *     summary="languages",
- *     description="languages",
- *     operationId="Languages",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form languages",
- *          @OA\JsonContent(
- *            required={"language_code", "language_name"},
- *              @OA\Property(property="language_code", type="string"),
- *              @OA\Property(property="language_name", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    //Store
+    /**
+     * @OA\Post(
+     *     path="/api/languages",
+     *     tags={"Languages"},
+     *     summary="languages",
+     *     description="languages",
+     *     operationId="Languages",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form languages",
+     *          @OA\JsonContent(
+     *            required={"language_code", "language_name"},
+     *              @OA\Property(property="language_code", type="string"),
+     *              @OA\Property(property="language_name", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'language_code' => 'required|string|unique:languages',
+            'language_code' => 'required|string|unique:languages|max:2',
             'language_name' => 'required|string|unique:languages',
         ]);
 
@@ -82,7 +81,7 @@ class LanguageController extends MainController
         $res = new LanguageResource($language);
         return $this->sendSuccess(201, 'Langueage created successfully', $res);
     }
-/**
+    /**
      * @OA\Get(
      *     path="/api/languages/{id}",
      *     tags={"Languages"},
@@ -104,10 +103,9 @@ class LanguageController extends MainController
      *     )
      * )
      */
-    //Show
-    public function show(string $id)
+    public function show(string $languageCode)
     {
-        $language = Language::find($id);
+        $language = Language::where('language_code', $languageCode)->first();
 
         if (!$language) {
             return $this->sendError(404, 'Language not found');
@@ -137,8 +135,8 @@ class LanguageController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"language_code", "language_name"},
- *              @OA\Property(property="language_code", type="string"),
- *              @OA\Property(property="language_name", type="string"),
+     *              @OA\Property(property="language_code", type="string"),
+     *              @OA\Property(property="language_name", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -147,23 +145,17 @@ class LanguageController extends MainController
      *     )
      * )
      */
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $languageCode)
     {
-        $language = Language::find($id);
+        $language = Language::where('language_code', $languageCode)->first();
 
         if (!$language) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Language not found',
-            ], 404);
+            return $this->sendError(404, 'Language not found');
         }
 
         $validator = Validator::make($request->all(), [
-            'language_code' => 'required|string|unique:languages,language_code,' . $id,
-            'language_name' => 'required|string|unique:languages,language_name,' . $id,
+            'language_code' => 'required|string|max:2|unique:languages,language_code,' . $languageCode,
+            'language_name' => 'required|string|unique:languages,language_name,' . $languageCode,
         ]);
 
         if ($validator->fails()) {
@@ -179,7 +171,7 @@ class LanguageController extends MainController
         $res = new LanguageResource($language);
         return $this->sendSuccess(200, 'Language updated successfully', $res);
     }
-/**
+    /**
      * @OA\Delete(
      *     path="/api/languages/{id}",
      *     tags={"Languages"},
@@ -201,18 +193,19 @@ class LanguageController extends MainController
      *     )
      * )
      */
-    public function destroy(string $id)
+    public function destroy(string $languageCode)
     {
-        $language = Language::find($id);
+        $language = Language::where('language_code', $languageCode)->first();
 
         if (!$language) {
             return $this->sendError(404, 'Language not found');
         }
+
         if (!Gate::allows('admin', User::class)) {
             return $this->sendError(403, 'You are not allows');
         }
-        $language->delete();
 
+        $language->delete();
         return $this->sendSuccess(200, 'Language deleted successfully');
     }
 }

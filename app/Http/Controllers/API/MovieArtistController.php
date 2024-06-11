@@ -1,12 +1,11 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
 use App\Http\Resources\MovieArtist\MovieArtistResource;
 use App\Http\Resources\MovieArtist\MovieArtistResourceCollection;
 use App\Models\MovieArtist;
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -14,21 +13,19 @@ use Illuminate\Support\Facades\Validator;
 
 class MovieArtistController extends MainController
 {
-     /**
- * @OA\Get(
- *     path="/api/movie_artists",
- *     tags={"Movie_Artists"},
- *     summary="Get List movie_artists Data",
- *     description="enter your movie_artists here",
- *     operationId="Movie_Artists",
- *     @OA\Response(
- *         response="default",
- *         description="return array model movie_artists"
- *     )
- * )
- */
-
-    // Index
+    /**
+     * @OA\Get(
+     *     path="/api/movie_artists",
+     *     tags={"Movie_Artists"},
+     *     summary="Get List movie_artists Data",
+     *     description="enter your movie_artists here",
+     *     operationId="Movie_Artists",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model movie_artists"
+     *     )
+     * )
+     */
     public function index()
     {
         $movieArtists = MovieArtist::all();
@@ -40,31 +37,31 @@ class MovieArtistController extends MainController
             return $this->sendError(404, 'No Records Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/movie_artists",
- *     tags={"Movie_Artists"},
- *     summary="movie_artists",
- *     description="-",
- *     operationId="movie_artists",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form movie_artists",
- *          @OA\JsonContent(
- *            required={"movie_id", "artist_id", "role_id","movie_artist_name", },
- *              @OA\Property(property="movie_id", type="string"),
- *              @OA\Property(property="artist_id", type="string"),
-                * @OA\Property(property="role_id", type="string"),
-                * @OA\Property(property="movie_artist_name", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *     )
- * )
- */
-    // Store
+
+    /**
+     * @OA\Post(
+     *     path="/api/movie_artists",
+     *     tags={"Movie_Artists"},
+     *     summary="movie_artists",
+     *     description="-",
+     *     operationId="movie_artists",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form movie_artists",
+     *          @OA\JsonContent(
+     *            required={"movie_id", "artist_id", "role_id","movie_artist_name", },
+     *              @OA\Property(property="movie_id", type="string"),
+     *              @OA\Property(property="artist_id", type="string"),
+     * @OA\Property(property="role_id", type="string"),
+     * @OA\Property(property="movie_artist_name", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -79,7 +76,7 @@ class MovieArtistController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed to perform this action');
+            return $this->sendError(403, 'You are not alloweds');
         }
 
         $movieArtist = MovieArtist::create($request->all());
@@ -87,7 +84,8 @@ class MovieArtistController extends MainController
         $res = new MovieArtistResource($movieArtist);
         return $this->sendSuccess(201, 'Movie artist created successfully', $res);
     }
-/**
+
+    /**
      * @OA\Get(
      *     path="/api/movie_artists/{id}",
      *     tags={"Movie_Artists"},
@@ -109,19 +107,19 @@ class MovieArtistController extends MainController
      *     )
      * )
      */
-    // Show
-    public function show($movieId)
+    public function show($id)
     {
-        $movieArtist = MovieArtist::where('movie_id', $movieId)->get();
+        $movieArtist = MovieArtist::find($id);
 
         if (!$movieArtist) {
             return $this->sendError(404, 'Movie artist not found');
         }
 
-        $res = new MovieArtistResourceCollection($movieArtist);
+        $res = new MovieArtistResource($movieArtist);
         return $this->sendSuccess(200, 'Movie Artist found', $res);
     }
-/**
+
+    /**
      * @OA\Put(
      *     path="/api/movie_artists/{id}",
      *     tags={"Movie_Artists"},
@@ -142,10 +140,10 @@ class MovieArtistController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"movie_id", "artist_id", "role_id", "movie_artist_name"},
- *              @OA\Property(property="movie_id", type="string"),
- *              @OA\Property(property="artist_id", type="string"),
- *              @OA\Property(property="role_id", type="string"),
- *              @OA\Property(property="movie_artist_name", type="string"),
+     *              @OA\Property(property="movie_id", type="string"),
+     *              @OA\Property(property="artist_id", type="string"),
+     *              @OA\Property(property="role_id", type="string"),
+     *              @OA\Property(property="movie_artist_name", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -154,7 +152,6 @@ class MovieArtistController extends MainController
      *     )
      * )
      */
-    // Update
     public function update(Request $request, $id)
     {
         $movieArtist = MovieArtist::find($id);
@@ -175,7 +172,7 @@ class MovieArtistController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed to perform this action');
+            return $this->sendError(403, 'You are not allowed');
         }
 
         $movieArtist->update($request->all());
@@ -183,7 +180,8 @@ class MovieArtistController extends MainController
         $res = new MovieArtistResource($movieArtist);
         return $this->sendSuccess(200, 'Movie artist updated successfully', $res);
     }
-/**
+
+    /**
      * @OA\Delete(
      *     path="/api/movie_artists/{id}",
      *     tags={"Movie_Artists"},
@@ -205,7 +203,6 @@ class MovieArtistController extends MainController
      *     )
      * )
      */
-    // Destroy
     public function destroy($id)
     {
         $movieArtist = MovieArtist::find($id);
@@ -220,5 +217,18 @@ class MovieArtistController extends MainController
 
         $movieArtist->delete();
         return $this->sendSuccess(200, 'Movie artist deleted successfully');
+    }
+
+
+    public function showByMovieId($movieId)
+    {
+        $movieArtist = MovieArtist::where('movie_id', $movieId)->get();
+
+        if (!$movieArtist) {
+            return $this->sendError(404, 'Movie artist not found');
+        }
+
+        $res = new MovieArtistResourceCollection($movieArtist);
+        return $this->sendSuccess(200, 'Movie Artist found', $res);
     }
 }

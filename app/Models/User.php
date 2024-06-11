@@ -22,9 +22,4 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
-
-    public function subscriptionPlan()
-    {
-        return $this->belongsTo(SubscriptionPlan::class);
-    }
 }

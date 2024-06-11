@@ -1,5 +1,5 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
@@ -12,20 +12,20 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class CountryController extends MainController
-{  /**
-    * @OA\Get(
-    *     path="/api/countries",
-    *     tags={"Countries"},
-    *     summary="Get List countries Data",
-    *     description="enter your countries here",
-    *     operationId="countries",
-    *     @OA\Response(
-    *         response="default",
-    *         description="return array model countries"
-    *     )
-    * )
-    */
-    //Index
+{
+    /**
+     * @OA\Get(
+     *     path="/api/countries",
+     *     tags={"Countries"},
+     *     summary="Get List countries Data",
+     *     description="enter your countries here",
+     *     operationId="countries",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model countries"
+     *     )
+     * )
+     */
     public function index()
     {
         $countries = Country::all();
@@ -37,34 +37,33 @@ class CountryController extends MainController
             return $this->sendError(400, 'No Record Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/countries",
- *     tags={"Countries"},
- *     summary="countries",
- *     description="countries",
- *     operationId="Countries",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form countries",
- *          @OA\JsonContent(
- *            required={"country_code", "country_name"},
- *              @OA\Property(property="country_code", type="string"),
- *              @OA\Property(property="country_name", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    //Store
+    /**
+     * @OA\Post(
+     *     path="/api/countries",
+     *     tags={"Countries"},
+     *     summary="countries",
+     *     description="countries",
+     *     operationId="Countries",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form countries",
+     *          @OA\JsonContent(
+     *            required={"country_code", "country_name"},
+     *              @OA\Property(property="country_code", type="string"),
+     *              @OA\Property(property="country_name", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'country_code' => 'required|string|unique:countries',
+            'country_code' => 'required|string|unique:countries|max:2',
             'country_name' => 'required|string|unique:countries',
         ]);
 
@@ -73,7 +72,7 @@ class CountryController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
         $country = Country::create($request->all());
@@ -81,7 +80,7 @@ class CountryController extends MainController
         $res = new CountryResource($country);
         return $this->sendSuccess(201, 'Country created successfully', $res);
     }
-/**
+    /**
      * @OA\Get(
      *     path="/api/countries/{id}",
      *     tags={"Countries"},
@@ -103,19 +102,18 @@ class CountryController extends MainController
      *     )
      * )
      */
-    //Show
-    public function show(string $id)
+    public function show($countyCode)
     {
-        $country = Country::find($id);
+        $country = Country::where('country_code', $countyCode)->first();
 
         if (!$country) {
             return $this->sendError(404, 'Country not found');
         }
 
         $res = new CountryResource($country);
-        return $this->sendSuccess(200, 'Country Found', $country);
+        return $this->sendSuccess(200, 'Country Found', $res);
     }
-/**
+    /**
      * @OA\Put(
      *     path="/api/countries/{id}",
      *     tags={"Countries"},
@@ -136,8 +134,8 @@ class CountryController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"country_code", "country_name"},
- *              @OA\Property(property="country_code", type="string"),
- *              @OA\Property(property="country_name", type="string"),
+     *              @OA\Property(property="country_code", type="string"),
+     *              @OA\Property(property="country_name", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -156,7 +154,7 @@ class CountryController extends MainController
         }
 
         $validator = Validator::make($request->all(), [
-            'country_code' => 'required|string|unique:countries,country_code,' . $id,
+            'country_code' => 'required|string|max:2|unique:countries,country_code,' . $id,
             'country_name' => 'required|string|unique:countries,country_name,' . $id,
         ]);
 
@@ -173,7 +171,7 @@ class CountryController extends MainController
         $res = new CountryResource($country);
         return $this->sendSuccess(200, 'Country updated successfully', $res);
     }
-/**
+    /**
      * @OA\Delete(
      *     path="/api/countries/{id}",
      *     tags={"Countries"},

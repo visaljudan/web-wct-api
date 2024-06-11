@@ -17,6 +17,18 @@ class MovieLanguageSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'movie_id' => 2,
+                'language_code' => 'ko',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'movie_id' => 3,
+                'language_code' => 'en',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
             // Add more movie-language associations as needed
         ]);
     }

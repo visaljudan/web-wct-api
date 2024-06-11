@@ -1,78 +1,72 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MainController;
+use App\Http\Resources\SubscriptionPlan\SubscriptionPlanResource;
+use App\Http\Resources\SubscriptionPlan\SubscriptionPlanResourceCollection;
 use App\Models\SubscriptionPlan;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 
-class SubscriptionPlanController extends Controller
-{   /**
-    * @OA\Get(
-    *     path="/api/subscription-plans",
-    *     tags={"Subscription-Plans"},
-    *     summary="Get List subscription-plans Data",
-    *     description="enter your subscription-plans here",
-    *     operationId="subscription-plans",
-    *     @OA\Response(
-    *         response="default",
-    *         description="return array model subscription-plans"
-    *     )
-    * )
-    */
-    // /**
-    //  * Display a listing of the resource.
-    //  */
+class SubscriptionPlanController extends MainController
+{
+    /**
+     * @OA\Get(
+     *     path="/api/subscription-plans",
+     *     tags={"Subscription-Plans"},
+     *     summary="Get List subscription-plans Data",
+     *     description="enter your subscription-plans here",
+     *     operationId="subscription-plans",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model subscription-plans"
+     *     )
+     * )
+     */
     public function index()
     {
         $subscriptionPlans = SubscriptionPlan::all();
+
         if ($subscriptionPlans->count() > 0) {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 200,
-                'subscriptionPlans' => $subscriptionPlans
-            ], 200);
+            $res = new SubscriptionPlanResourceCollection($subscriptionPlans);
+            return $this->sendSuccess(200, 'Subsctiption plan found', $res);
         } else {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 400,
-                'message' => 'No Record Found',
-            ], 400);
+            return $this->sendError(400, 'No Record Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/subscription-plans",
- *     tags={"Subscription-Plans"},
- *     summary="subscription-plans",
- *     description="subscription-plans",
- *     operationId="Subscription-Plans",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form subscription-plans",
- *          @OA\JsonContent(
- *            required={"subscription_plan_name", "subscription_plan_description", "subscription_plan_price", "subscription_plan_duration"},
- *              @OA\Property(property="subscription_plan_name", type="string"),
- *              @OA\Property(property="subscription_plan_description", type="string"),
-            * @OA\Property(property="subscription_plan_price", type="string"),
-            * @OA\Property(property="subscription_plan_duration", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
+    /**
+     * @OA\Post(
+     *     path="/api/subscription-plans",
+     *     tags={"Subscription-Plans"},
+     *     summary="subscription-plans",
+     *     description="subscription-plans",
+     *     operationId="Subscription-Plans",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form subscription-plans",
+     *          @OA\JsonContent(
+     *            required={"subscription_plan_name", "subscription_plan_description", "subscription_plan_price", "subscription_plan_duration"},
+     *              @OA\Property(property="subscription_plan_name", type="string"),
+     *              @OA\Property(property="subscription_plan_description", type="string"),
+     * @OA\Property(property="subscription_plan_price", type="string"),
+     * @OA\Property(property="subscription_plan_duration", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
-        // Validate incoming request data
+        // Define validation rules for the incoming request
         $validator = Validator::make($request->all(), [
             'subscription_plan_name' => 'required|string|unique:subscription_plans',
             'subscription_plan_description' => 'required|string',
@@ -80,41 +74,24 @@ class SubscriptionPlanController extends Controller
             'subscription_plan_duration' => 'required|integer',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
-        $subscriptionPlan = SubscriptionPlan::where('subscription_plan_name', $request->subscription_plan_name)->first();
-        if ($subscriptionPlan) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Subscription plan name is already used!',
-            ], 422);
+        // Check if the current user is authorized to create a subscription plan
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed');
         }
 
+        // Create the subscription plan using the request data
+        $subscriptionPlan = SubscriptionPlan::create($request->all());
 
-        // Create a new subscription plan record
-        $subscriptionPlan = SubscriptionPlan::create([
-            'subscription_plan_name' => $request->input('subscription_plan_name'),
-            'subscription_plan_description' => $request->input('subscription_plan_description'),
-            'subscription_plan_price' => $request->input('subscription_plan_price'),
-            'subscription_plan_duration' => $request->input('subscription_plan_duration'),
-        ]);
-
-        // Return a success response
-        return response()->json([
-            'success' => true,
-            'statusCode' => 201,
-            'message' => 'Subscription plan created successfully',
-            'subscription_plan' => $subscriptionPlan,
-        ], 201);
+        // Return a success response with the created subscription plan data
+        $res = new SubscriptionPlanResource($subscriptionPlan);
+        return $this->sendSuccess(201, 'Subscription plan created successfully', $res);
     }
+
     /**
      * @OA\Get(
      *     path="/api/subscription-plans/{id}",
@@ -137,30 +114,22 @@ class SubscriptionPlanController extends Controller
      *     )
      * )
      */
-    // /**
-    //  * Display the specified resource.
-    //  */
     public function show($id)
     {
+        // Find the subscription plan by its ID
         $subscriptionPlan = SubscriptionPlan::find($id);
 
-        // If subscription plan not found, return error response
+        // Check if the subscription plan exists
         if (!$subscriptionPlan) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Subscription plan not found',
-            ], 404);
+            return $this->sendError(404, 'Subscription plan not found');
         }
 
-        // Return the subscription plan data
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'subscription_plan' => $subscriptionPlan
-        ], 200);
+        // Return a success response with the transformed subscription plan data
+        $res = new SubscriptionPlanResource($subscriptionPlan);
+        return $this->sendSuccess(200, 'Subscription plan found', $res);
     }
-/**
+
+    /**
      * @OA\Put(
      *     path="/api/subscription-plans/{id}",
      *     tags={"Subscription-Plans"},
@@ -181,10 +150,10 @@ class SubscriptionPlanController extends Controller
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"subscription_plan_name", "subscription_plan_description", "subscription_plan_price", "subscription_plan_duration"},
- *              @OA\Property(property="subscription_plan_name", type="string"),
- *              @OA\Property(property="subscription_plan_description", type="string"),
-            * @OA\Property(property="subscription_plan_price", type="numeric"),
-            * @OA\Property(property="subscription_plan_duration", type="integer"),
+     *              @OA\Property(property="subscription_plan_name", type="string"),
+     *              @OA\Property(property="subscription_plan_description", type="string"),
+     * @OA\Property(property="subscription_plan_price", type="numeric"),
+     * @OA\Property(property="subscription_plan_duration", type="integer"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -193,9 +162,6 @@ class SubscriptionPlanController extends Controller
      *     )
      * )
      */
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
     public function update(Request $request, $id)
     {
         // Find the subscription plan by ID
@@ -203,11 +169,7 @@ class SubscriptionPlanController extends Controller
 
         // If subscription plan not found, return error response
         if (!$subscriptionPlan) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Subscription plan not found',
-            ], 404);
+            return $this->sendError(404, 'Subscription plan not found');
         }
 
         // Validate incoming request data
@@ -220,12 +182,12 @@ class SubscriptionPlanController extends Controller
 
         // If validation fails, return errors
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->sendError(422, 'Validation failed', $validator->errors());
+        }
+
+        // Check if the current user is authorized to create a subscription plan
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed');
         }
 
         // Update subscription plan attributes with new values
@@ -238,14 +200,11 @@ class SubscriptionPlanController extends Controller
         $subscriptionPlan->save();
 
         // Return success response
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'message' => 'Subscription plan updated successfully',
-            'subscription_plan' => $subscriptionPlan,
-        ], 200);
+        $res = new SubscriptionPlanResource($subscriptionPlan);
+        return $this->sendSuccess(200, 'Subscription plan updated successfully', $res);
     }
-/**
+
+    /**
      * @OA\Delete(
      *     path="/api/subscription-plans/{id}",
      *     tags={"Subscription-Plans"},
@@ -267,30 +226,25 @@ class SubscriptionPlanController extends Controller
      *     )
      * )
      */
-    // /**
-    //  * Remove the specified resource from storage.
-    //  */
     public function destroy(string $id)
     {
+        // Find the subscription plan by ID
         $subscriptionPlan = SubscriptionPlan::find($id);
 
         // If subscription plan not found, return error response
         if (!$subscriptionPlan) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Subscription plan not found',
-            ], 404);
+            return $this->sendError(404, 'Subscription plan not found');
+        }
+
+        // Check if the current user is authorized to create a subscription plan
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed');
         }
 
         // Delete the subscription plan
         $subscriptionPlan->delete();
 
         // Return success response
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'message' => 'Subscription plan deleted successfully',
-        ], 200);
+        return $this->sendSuccess(200, 'Subscription plan deleted successfully');
     }
 }

@@ -13,20 +13,19 @@ use Illuminate\Support\Facades\Validator;
 
 class MovieLanguageController extends MainController
 {
-      /**
- * @OA\Get(
- *     path="/api/movie_languages",
- *     tags={"Movie_Languages"},
- *     summary="Get List Artists Data",
- *     description="enter your Artists here",
- *     operationId="movie_languages",
- *     @OA\Response(
- *         response="default",
- *         description="return array model Artists"
- *     )
- * )
- */
-    // Index
+    /**
+     * @OA\Get(
+     *     path="/api/movie_languages",
+     *     tags={"Movie_Languages"},
+     *     summary="Get List Artists Data",
+     *     description="enter your Artists here",
+     *     operationId="movie_languages",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model Artists"
+     *     )
+     * )
+     */
     public function index()
     {
         $movieLanguages = MovieLanguage::all();
@@ -38,30 +37,30 @@ class MovieLanguageController extends MainController
             return $this->sendError(404, 'No Records Found');
         }
     }
-/**
- * @OA\Post(
- *     path="/api/movie_languages",
- *     tags={"Movie_Languages"},
- *     summary="movie_languages",
- *     description="movie_languages",
- *     operationId="Movie_Languages",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form movie_languages",
- *          @OA\JsonContent(
- *            required={"movie_id", "language_code"},
- *              @OA\Property(property="movie_id", type="string"),
- *              @OA\Property(property="language_code", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    // Store
+
+    /**
+     * @OA\Post(
+     *     path="/api/movie_languages",
+     *     tags={"Movie_Languages"},
+     *     summary="movie_languages",
+     *     description="movie_languages",
+     *     operationId="Movie_Languages",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form movie_languages",
+     *          @OA\JsonContent(
+     *            required={"movie_id", "language_code"},
+     *              @OA\Property(property="movie_id", type="string"),
+     *              @OA\Property(property="language_code", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -74,7 +73,7 @@ class MovieLanguageController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed to perform this action');
+            return $this->sendError(403, 'You are not allowed');
         }
 
         $movieLanguage = MovieLanguage::create($request->all());
@@ -82,7 +81,7 @@ class MovieLanguageController extends MainController
         $res = new MovieLanguageResource($movieLanguage);
         return $this->sendSuccess(201, 'Movie language created successfully', $res);
     }
-/**
+    /**
      * @OA\Get(
      *     path="/api/movie_languages/{id}",
      *     tags={"Movie_Languages"},
@@ -104,7 +103,6 @@ class MovieLanguageController extends MainController
      *     )
      * )
      */
-    // Show
     public function show($id)
     {
         $movieLanguage = MovieLanguage::find($id);
@@ -116,7 +114,8 @@ class MovieLanguageController extends MainController
         $res = new MovieLanguageResource($movieLanguage);
         return $this->sendSuccess(200, 'Movie Language found', $res);
     }
-/**
+
+    /**
      * @OA\Put(
      *     path="/api/movie_languages/{id}",
      *     tags={"Movie_Languages"},
@@ -137,8 +136,8 @@ class MovieLanguageController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"movie_id", "language_code"},
- *              @OA\Property(property="movie_id", type="string"),
- *              @OA\Property(property="language_code", type="string"),
+     *              @OA\Property(property="movie_id", type="string"),
+     *              @OA\Property(property="language_code", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -147,7 +146,6 @@ class MovieLanguageController extends MainController
      *     )
      * )
      */
-    // Update
     public function update(Request $request, $id)
     {
         $movieLanguage = MovieLanguage::find($id);
@@ -174,7 +172,8 @@ class MovieLanguageController extends MainController
         $res = new MovieLanguageResource($movieLanguage);
         return $this->sendSuccess(200, 'Movie language updated successfully', $res);
     }
-/**
+
+    /**
      * @OA\Delete(
      *     path="/api/movie_languages/{id}",
      *     tags={"Movie_Languages"},
@@ -196,7 +195,6 @@ class MovieLanguageController extends MainController
      *     )
      * )
      */
-    // Destroy
     public function destroy($id)
     {
         $movieLanguage = MovieLanguage::find($id);
@@ -211,5 +209,36 @@ class MovieLanguageController extends MainController
 
         $movieLanguage->delete();
         return $this->sendSuccess(200, 'Movie language deleted successfully');
+    }
+
+    public function languageCodeMovie($languageCode)
+    {
+        // Retrieve movies associated with the provided country code
+        $movies = MovieLanguage::where('language_code', $languageCode)->get();
+
+        // Check if no movies are found for the provided country code
+        if ($movies->isEmpty()) {
+            return $this->sendError(404, 'Movies from this language not found');
+        }
+
+        // Return a success response with the movies from the country
+        $res = new MovieLanguageResourceCollection($movies);
+        return $this->sendSuccess(200, 'Movies from this language found', $res);
+    }
+
+
+    public function movieIdLanguage($movieId)
+    {
+        // Retrieve movies associated with the provided country code
+        $movies = MovieLanguage::where('movie_id', $movieId)->get();
+
+        // Check if no movies are found for the provided country code
+        if ($movies->isEmpty()) {
+            return $this->sendError(404, 'Movies from this language not found');
+        }
+
+        // Return a success response with the movies from the country
+        $res = new MovieLanguageResourceCollection($movies);
+        return $this->sendSuccess(200, 'Movies from this language found', $res);
     }
 }

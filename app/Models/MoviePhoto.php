@@ -10,11 +10,17 @@ class MoviePhoto extends Model
     use HasFactory;
     protected $fillable = [
         'movie_id',
-        'photo_path',
+        'photo_image_file',
+        'photo_image_url'
     ];
 
     public function movie()
     {
         return $this->belongsTo(Movie::class);
+    }
+
+    public function getPhotoImageAttribute()
+    {
+        return $this->photo_image_url ?: $this->photo_image_file;
     }
 }

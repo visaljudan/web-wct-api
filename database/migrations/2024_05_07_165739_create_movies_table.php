@@ -22,9 +22,9 @@ return new class extends Migration
             $table->string('poster_image')->nullable();
             $table->string('cover_image')->nullable();
             $table->string('trailer_url')->nullable();
-            $table->integer('total_likes')->default(0);
+            $table->integer('total_raters')->default(0);
             $table->integer('total_ratings')->default(0);
-            $table->decimal('average_rating', 3, 1)->nullable();
+            $table->decimal('average_rating', 3, 1)->default(0);
             $table->integer('popularity')->default(0);
             $table->string('terms_status')->nullable()->default("Public");
             $table->string('upload_status')->nullable();

@@ -19,6 +19,20 @@ class MovieSeriesSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'movie_id' => 2,
+                'season_number' => 1,
+                'episode_number' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'movie_id' => 2,
+                'season_number' => 1,
+                'episode_number' => 3,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
             // Add more movie series entries as needed
         ]);
     }

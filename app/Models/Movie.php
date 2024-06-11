@@ -11,6 +11,7 @@ class Movie extends Model
 
     protected $fillable = [
         'title',
+        'tv_show_id',
         'overview',
         'run_time',
         'release_date',
@@ -29,9 +30,11 @@ class Movie extends Model
     ];
 
     protected $casts = [
-        'release_date' => 'date',
-        'last_upload_date' => 'datetime',
         'user_subscription' => 'boolean',
-        'expire_subscription' => 'date',
     ];
+
+    public function tv_show()
+    {
+        return $this->belongsTo(TvShow::class, 'tv_show_id');
+    }
 }

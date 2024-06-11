@@ -1,5 +1,5 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
@@ -12,29 +12,29 @@ use Illuminate\Support\Str;
 
 class AuthController extends MainController
 {
-/**
- * @OA\Post(
- *     path="/api/signup",
- *     tags={"Auth"},
- *     summary="signup",
- *     description="-",
- *     operationId="signup",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form signup",
- *          @OA\JsonContent(
- *            required={"username", "email", "password"},
- *              @OA\Property(property="username", type="string"),
- *              @OA\Property(property="email", type="string"),
- *              @OA\Property(property="password", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *     )
- * )
- */
+    /**
+     * @OA\Post(
+     *     path="/api/signup",
+     *     tags={"Auth"},
+     *     summary="signup",
+     *     description="-",
+     *     operationId="signup",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form signup",
+     *          @OA\JsonContent(
+     *            required={"username", "email", "password"},
+     *              @OA\Property(property="username", type="string"),
+     *              @OA\Property(property="email", type="string"),
+     *              @OA\Property(property="password", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     public function signup(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -58,33 +58,31 @@ class AuthController extends MainController
         $user->save();
 
         $user = User::find($user->id);
-
         $res = new UserResource($user);
-
         return $this->sendSuccess(200, 'User registered successfully', $res);
     }
-/**
- * @OA\Post(
- *     path="/api/signin",
- *     tags={"Auth"},
- *     summary="signin",
- *     description="-",
- *     operationId="signin",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form signin",
- *          @OA\JsonContent(
- *            required={"username_email", "password"},
- *              @OA\Property(property="username_email", type="string"),
- *              @OA\Property(property="password", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *     )
- * )
- */
+    /**
+     * @OA\Post(
+     *     path="/api/signin",
+     *     tags={"Auth"},
+     *     summary="signin",
+     *     description="-",
+     *     operationId="signin",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form signin",
+     *          @OA\JsonContent(
+     *            required={"username_email", "password"},
+     *              @OA\Property(property="username_email", type="string"),
+     *              @OA\Property(property="password", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
+     * )
+     */
     public function signin(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -109,12 +107,9 @@ class AuthController extends MainController
         }
 
         $token = $user->createToken($user->name . '-AuthToken')->plainTextToken;
-
         $user->update(['api_token' => $token]);
 
-
         $res = new UserResource($user);
-
         return $this->sendSuccess(200, 'User authenticated successfully', $res);
     }
 
@@ -127,45 +122,43 @@ class AuthController extends MainController
         }
 
         $tokenValue = str_replace('Bearer ', '', $token);
-
         $user = User::where('api_token', $tokenValue)->first();
 
-        if ($user) {
-            $user->update(['api_token' => null]);
-            return $this->sendSuccess(200, 'User signed out successfully');
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token or user not found', $tokenValue);
         }
 
-        return $this->sendError(401, 'Invalid token or user not found', $tokenValue);
+        $user->update(['api_token' => null]);
+        return $this->sendSuccess(200, 'User signed out successfully');
     }
-/**
- * @OA\Post(
- *     path="/api/google",
- *     tags={"Google"},
- *     summary="google",
- *     description="google",
- *     operationId="google",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form google",
- *          @OA\JsonContent(
- *            required={"username", "email", "profile"},
- *              @OA\Property(property="username", type="string"),
- *              @OA\Property(property="email", type="string"),
- *              @OA\Property(property="profile", type="url"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
+    /**
+     * @OA\Post(
+     *     path="/api/google",
+     *     tags={"Google"},
+     *     summary="google",
+     *     description="google",
+     *     operationId="google",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form google",
+     *          @OA\JsonContent(
+     *            required={"username", "email", "profile"},
+     *              @OA\Property(property="username", type="string"),
+     *              @OA\Property(property="email", type="string"),
+     *              @OA\Property(property="profile", type="url"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function google(Request $request)
     {
-        // Validate the request data
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string',
+            'username' => 'required|string|unique:users',
             'email' => 'required|email',
             'profile' => 'nullable|url',
         ]);
@@ -177,12 +170,9 @@ class AuthController extends MainController
         // Find the user by email
         $user = User::where('email', $request->email)->first();
 
-        // If the user exists, it's a sign-in operation
         if ($user) {
-            // Generate a token for the user
+            //Generate token
             $token = $user->createToken($user->name . '-AuthToken')->plainTextToken;
-
-            // Update the user's API token
             $user->update(['api_token' => $token]);
 
             // Return the user resource with success response
@@ -192,10 +182,11 @@ class AuthController extends MainController
             // If the user doesn't exist, it's a sign-up operation
             // Generate a secure random password
             $password = Str::random(16);
+            $username = $request->username . rand(1000, 9999) . "";
 
             // Create a new user with the provided data
             $user = User::create([
-                'username' => $request->username,
+                'username' => $username,
                 'email' => $request->email,
                 'password' => Hash::make($password),
                 'profile' => $request->profile,

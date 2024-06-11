@@ -1,60 +1,74 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
 use App\Http\Resources\SavedMovie\SavedMovieResource;
-// use App\Http\Resources\SavedMovie\SavedMovieResourceCollection;
+use App\Http\Resources\SavedMovie\SavedMovieResourceCollection;
 use App\Models\SavedMovie;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
 class SavedMovieController extends MainController
 {
-    // Index
-    // public function index()
-    // {
-    //     if (!Gate::allows('userId', User::class)) {
-    //         return $this->sendError(403, 'You are not allowed to perform this action');
-    //     }
+    public function index(Request $request)
+    {
+        // Get the token from the request header
+        $token = $request->header('Authorization');
 
-    //     $savedMovies = SavedMovie::all();
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
 
-    //     if ($savedMovies->count() > 0) {
-    //         $res = new SavedMovieResourceCollection($savedMovies);
-    //         return $this->sendSuccess(200, 'Saved Movies Found', $res);
-    //     } else {
-    //         return $this->sendError(404, 'No Records Found');
-    //     }
-    // }
-/**
- * @OA\Post(
- *     path="/api/saved-movies",
- *     tags={"Saved-Movies"},
- *     summary="saved-movies",
- *     description="saved-movies",
- *     operationId="Saved-Movies",
- *     @OA\RequestBody(
- *          required=true,
- *          description="form saved-movies",
- *          @OA\JsonContent(
- *            required={"user_id", "movie_id"},
- *              @OA\Property(property="user_id", type="string"),
- *              @OA\Property(property="movie_id", type="string"),
- *          ),
- *      ),
- *     @OA\Response(
- *         response="default",
- *         description=""
- *        
- *     )
- * )
- */
-    // Store
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Retrieve saved movies for the authenticated user
+        $savedMovies = SavedMovie::where('user_id', $user->id)->get();
+
+        if ($savedMovies->isEmpty()) {
+            return $this->sendError(404, 'No Records Found');
+        }
+
+        // Return a success response with the saved movies
+        $res = new SavedMovieResourceCollection($savedMovies);
+        return $this->sendSuccess(200, 'Saved Movies Found', $res);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/saved-movies",
+     *     tags={"Saved-Movies"},
+     *     summary="saved-movies",
+     *     description="saved-movies",
+     *     operationId="Saved-Movies",
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form saved-movies",
+     *          @OA\JsonContent(
+     *            required={"user_id", "movie_id"},
+     *              @OA\Property(property="user_id", type="string"),
+     *              @OA\Property(property="movie_id", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
+        // Validate request data
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'movie_id' => 'required|exists:movies,id',
@@ -64,16 +78,47 @@ class SavedMovieController extends MainController
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
-        if (!Gate::allows('userId', User::class)) {
-            return $this->sendError(403, 'You are not allowed to perform this action');
+        // Get the token from the request header
+        $token = $request->header('Authorization');
+
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
         }
 
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Check if the authenticated user is the same as the user_id in the request
+        if ($user->id !== $request->user_id) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
+        // Check if the user has already saved this movie
+        $existingSavedMovie = SavedMovie::where('user_id', $user->id)
+            ->where('movie_id', $request->movie_id)
+            ->first();
+
+        if ($existingSavedMovie) {
+            return $this->sendError(409, 'Movie already saved by the user');
+        }
+
+        // Create a new saved movie
         $savedMovie = SavedMovie::create($request->all());
 
+        // Return a success response
         $res = new SavedMovieResource($savedMovie);
         return $this->sendSuccess(201, 'Saved movie created successfully', $res);
     }
-/**
+
+
+    /**
      * @OA\Get(
      *     path="/api/saved-movies/{id}",
      *     tags={"Saved-Movies"},
@@ -95,15 +140,30 @@ class SavedMovieController extends MainController
      *     )
      * )
      */
-    // Show
-    public function show($id)
-    {
 
-        if (!Gate::allows('userId', User::class)) {
-            return $this->sendError(403, 'You are not allowed to perform this action');
+    public function show(Request $request, $movieId)
+    {
+        // Get the token from the request header
+        $token = $request->header('Authorization');
+
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
         }
 
-        $savedMovie = SavedMovie::find($id);
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Retrieve the specific saved movie for the authenticated user with the specified movie_id
+        $savedMovie = SavedMovie::where('movie_id', $movieId)
+            ->where('user_id', $user->id)
+            ->first();
 
         if (!$savedMovie) {
             return $this->sendError(404, 'Saved movie not found');
@@ -112,7 +172,8 @@ class SavedMovieController extends MainController
         $res = new SavedMovieResource($savedMovie);
         return $this->sendSuccess(200, 'Saved Movie found', $res);
     }
-/**
+
+    /**
      * @OA\Put(
      *     path="/api/saved-movies/{id}",
      *     tags={"Saved-Movies"},
@@ -133,8 +194,8 @@ class SavedMovieController extends MainController
      *          description="form admin",
      *          @OA\JsonContent(
      *             required={"user_id", "movie_id"},
- *              @OA\Property(property="user_id", type="string"),
- *              @OA\Property(property="movie_id", type="string"),
+     *              @OA\Property(property="user_id", type="string"),
+     *              @OA\Property(property="movie_id", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -143,34 +204,71 @@ class SavedMovieController extends MainController
      *     )
      * )
      */
-    // Update
-    public function update(Request $request, $id)
+    public function update(Request $request, $movieId)
     {
-        $savedMovie = SavedMovie::find($id);
-
-        if (!$savedMovie) {
-            return $this->sendError(404, 'Saved movie not found');
-        }
-
+        // Validate request data
         $validator = Validator::make($request->all(), [
-            'user_id' => 'exists:users,id',
-            'movie_id' => 'exists:movies,id',
+            'user_id' => 'required|exists:users,id',
+            'movie_id' => 'required|exists:movies,id',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
-        if (!Gate::allows('userId', User::class)) {
+        // Get the token from the request header
+        $token = $request->header('Authorization');
+
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Check if the authenticated user is the same as the user_id in the request
+        if ($user->id !== $request->user_id) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
+        $savedMovie = SavedMovie::where('movie_id', $movieId)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$savedMovie) {
+            return $this->sendError(404, 'Saved movie not found');
+        }
+
+        // Check if the authenticated user is the owner of the saved movie
+        if ($user->id !== $savedMovie->user_id) {
             return $this->sendError(403, 'You are not allowed to perform this action');
         }
 
+        // Validate request data again for specific fields if needed
+        $validator = Validator::make($request->all(), [
+            // Add validation rules for specific fields if needed
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(422, 'Validation failed', $validator->errors());
+        }
+
+        // Update the saved movie
         $savedMovie->update($request->all());
 
+        // Return a success response
         $res = new SavedMovieResource($savedMovie);
         return $this->sendSuccess(200, 'Saved movie updated successfully', $res);
     }
-/**
+
+    /**
      * @OA\Delete(
      *     path="/api/saved-movies/{id}",
      *     tags={"Saved-Movies"},
@@ -192,20 +290,45 @@ class SavedMovieController extends MainController
      *     )
      * )
      */
-    // Destroy
-    public function destroy($id)
+
+    public function destroy(Request $request, $movieId)
     {
-        $savedMovie = SavedMovie::find($id);
+        // Get the token from the request header
+        $token = $request->header('Authorization');
+
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Find the saved movie by ID
+        $savedMovie = SavedMovie::where('movie_id', $movieId)
+            ->where('user_id', $user->id)
+            ->first();
+
 
         if (!$savedMovie) {
             return $this->sendError(404, 'Saved movie not found');
         }
 
-        if (!Gate::allows('userId', User::class)) {
+        // Check if the authenticated user is the owner of the saved movie
+        if ($user->id !== $savedMovie->user_id) {
             return $this->sendError(403, 'You are not allowed to perform this action');
         }
 
+        // Delete the saved movie
         $savedMovie->delete();
+
+        // Return a success response
         return $this->sendSuccess(200, 'Saved movie deleted successfully');
     }
 }

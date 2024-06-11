@@ -7,11 +7,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class MovieResource extends JsonResource
 {
-    
+
     public function toArray($request)
     {
         return [
             'id' => $this->id,
+            'tv_show_id' => $this->tv_show_id,
             'title' => $this->title,
             'overview' => $this->overview,
             'run_time' => $this->run_time,

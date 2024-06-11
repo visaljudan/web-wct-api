@@ -17,14 +17,10 @@ class CountrySeeder extends Seeder
             [
                 'country_code' => 'US',
                 'country_name' => 'United States',
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'country_code' => 'KR',
                 'country_name' => 'South Korea',
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
         ]);
     }

@@ -1,5 +1,5 @@
 <?php
-
+//Api Done (Add to aws s3)
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
@@ -34,7 +34,7 @@ class ArtistController extends MainController
             $res = new ArtistResourceCollection($artists);
             return $this->sendSuccess(200, 'Artist Found', $res);
         } else {
-            return $this->sendSuccess(400, 'No Record Found');
+            return $this->sendError(400, 'No Record Found');
         }
     }
     /**
@@ -60,9 +60,9 @@ class ArtistController extends MainController
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'artist_name' => 'required|string',
-            'artist_profile' => 'required|string',
-            // 'artist_profile' => 'nullable|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'name' => 'required|string',
+            'profile_image_file' => 'nullable|required_without:profile_image_url|image|mimes:jpeg,png,jpg,gif,svg',
+            'profile_image_url' => 'nullable|required_without:profile_image_file|string|url',
         ]);
 
         if ($validator->fails()) {
@@ -70,13 +70,10 @@ class ArtistController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
-        $artist = Artist::create([
-            'artist_name' => $request->artist_name,
-            'artist_profile' => $request->artist_profile,
-        ]);
+        $artist = Artist::create($request->all());
 
         $res = new ArtistResource($artist);
         return $this->sendSuccess(200, 'Artist created successfully', $res);
@@ -103,7 +100,6 @@ class ArtistController extends MainController
      *     )
      * )
      */
-    //Show
     public function show($id)
     {
         $artist = Artist::find($id);
@@ -144,7 +140,6 @@ class ArtistController extends MainController
      *         security={{"Bearer":{}}}
      * )
      */
-    //Update
     public function update(Request $request, $id)
     {
         $artist = Artist::find($id);
@@ -154,8 +149,9 @@ class ArtistController extends MainController
         }
 
         $validator = Validator::make($request->all(), [
-            'artist_name' => 'required|string|max:255|unique:artists,artist_name,' . $id,
-            'artist_profile' => 'required|string',
+            'name' => 'required|string',
+            'profile_image_file' => 'nullable|required_without:profile_image_url|image|mimes:jpeg,png,jpg,gif,svg',
+            'profile_image_url' => 'nullable|required_without:profile_image_file|string|url',
         ]);
 
         if ($validator->fails()) {
@@ -163,12 +159,12 @@ class ArtistController extends MainController
         }
 
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
-        $artist->artist_name = $request->artist_name;
-        $artist->artist_profile = $request->artist_profile;
-
+        $artist->name  = $request->name;
+        $artist->profile_image_file = $request->profile_image_file;
+        $artist->profile_image_url = $request->profile_image_url;
         $artist->save();
 
         $res = new ArtistResource($artist);
@@ -194,7 +190,6 @@ class ArtistController extends MainController
      *         security={{"Bearer":{}}}
      * )
      */
-    //Destroy
     public function destroy(string $id)
     {
         $artist = Artist::find($id);

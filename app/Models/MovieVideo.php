@@ -10,10 +10,14 @@ class MovieVideo extends Model
     use HasFactory;
     protected $fillable = [
         'movie_id',
+        'type',
+        'offical',
+        'subscription',
+        'subscription_start_date',
+        'subscription_end_date',
         'video_path',
     ];
 
-    // Define relationship with Movie model
     public function movie()
     {
         return $this->belongsTo(Movie::class);

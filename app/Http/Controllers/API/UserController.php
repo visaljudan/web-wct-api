@@ -1,5 +1,5 @@
 <?php
-
+//Api Done
 namespace App\Http\Controllers\API;
 
 use App\Http\Resources\User\UserResourceCollection;
@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Hash;
 use OpenApi\Annotations as OA;
 
 /**
@@ -89,6 +90,10 @@ class UserController extends MainController
             return $user->role != 'Admin';
         });
 
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
         if ($user->count() > 0) {
             $res = new UserResourceCollection($user);
             return $this->sendSuccess(200, 'User found', $res);
@@ -152,12 +157,17 @@ class UserController extends MainController
      *     )
      * )
      */
+
     public function show($id)
     {
         $user = User::find($id);
 
         if (!$user || $user->role == 'Admin') {
             return $this->sendError(404, 'No Record Found');
+        }
+
+        if (!Gate::allows('admin_userId', [$user, $id])) {
+            return $this->sendError(403, 'You are not allowed');
         }
 
         $res = new UserResource($user);
@@ -279,7 +289,6 @@ class UserController extends MainController
 
         $user->username = $request->input('username');
         $user->email = $request->input('email');
-
         $user->save();
 
         $res = new UserResource($user);
@@ -358,16 +367,76 @@ class UserController extends MainController
     {
         $user = User::find($id);
 
+        if (!$user) {
+            return $this->sendError(404, 'User not found');
+        }
+
         if (!Gate::allows('admin_userId', [$user, $id])) {
             return $this->sendError(403, 'You are not allowed');
         }
+
+        $user->delete();
+        return $this->sendSuccess(200, 'User deleted successfully');
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        $user = User::find($id);
 
         if (!$user) {
             return $this->sendError(404, 'User not found');
         }
 
-        $user->delete();
-        return $this->sendSuccess(200, 'User deleted successfully');
+        if (!Gate::allows('admin_userId', [$user, $id])) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string',
+            'new_password' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(422, 'Validation failed', $validator->errors());
+        }
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return $this->sendError(400, 'Current password is incorrect');
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        $res = new UserResource($user);
+        return $this->sendSuccess(200, 'Password updated successfully', $res);
+    }
+
+    public function newPassword(Request $request, $id)
+    {
+        $user = User::find($id);
+
+        if (!$user) {
+            return $this->sendError(404, 'User not found');
+        }
+
+        if (!Gate::allows('admin_userId', [$user, $id])) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
+        $validator = Validator::make($request->all(), [
+            'new_password' => 'required|string|min:6|confirmed',
+            'new_password_confirmation' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(422, 'Validation failed', $validator->errors());
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        $res = new UserResource($user);
+        return $this->sendSuccess(200, 'Password updated successfully', $res);
     }
 
     /**
