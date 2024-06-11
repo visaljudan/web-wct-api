@@ -54,9 +54,8 @@ class LanguageController extends MainController
      *              @OA\Property(property="language_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *        
      *     )
      * )
@@ -139,9 +138,8 @@ class LanguageController extends MainController
      *              @OA\Property(property="language_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
@@ -187,9 +185,8 @@ class LanguageController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *      @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */

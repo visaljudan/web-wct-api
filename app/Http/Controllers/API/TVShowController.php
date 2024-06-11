@@ -54,11 +54,8 @@ class TvShowController extends MainController
      *            
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *        
-     *     )
+     *    @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function store(Request $request)
@@ -140,10 +137,8 @@ class TvShowController extends MainController
      *             
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
 
@@ -189,10 +184,8 @@ class TvShowController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      * )
      */
     public function destroy($id)

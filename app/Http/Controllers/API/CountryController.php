@@ -53,9 +53,8 @@ class CountryController extends MainController
      *              @OA\Property(property="country_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *      @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *        
      *     )
      * )
@@ -138,9 +137,8 @@ class CountryController extends MainController
      *              @OA\Property(property="country_name", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *      @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
@@ -187,9 +185,8 @@ class CountryController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */

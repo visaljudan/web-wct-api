@@ -48,9 +48,10 @@ class MoviePhotoController extends MainController
      *          required=true,
      *          description="form movie_photos",
      *          @OA\JsonContent(
-     *            required={"movie_id", "photo"},
+     *            required={"movie_id", "photo_image_file", "photo_image_url"},
      *              @OA\Property(property="movie_id", type="string"),
-     *              @OA\Property(property="photo", type="image"),
+     *              @OA\Property(property="photo_image_file", type="image"),
+     *              @OA\Property(property="photo_image_url", type="string"),
      *          ),
      *      ),
      *     @OA\Response(
@@ -82,7 +83,28 @@ class MoviePhotoController extends MainController
         $res = new MoviePhotoResource($moviePhoto);
         return $this->sendSuccess(201, 'Movie photo uploaded successfully', $res);
     }
-
+ /**
+     * @OA\Get(
+     *     path="/api/movie_photos/{id}",
+     *     tags={"Movie_Photos"},
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="movie_photos/GetById",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
+     * )
+     */
     public function show($id)
     {
         $moviePhoto = MoviePhoto::find($id);
@@ -94,7 +116,36 @@ class MoviePhotoController extends MainController
         $res = new MoviePhotoResource($moviePhoto);
         return $this->sendSuccess(200, 'Movie photo found', $res);
     }
-
+/**
+     * @OA\Put(
+     *     path="/api/movie_photos/{id}",
+     *     tags={"Movie_Photos"},
+     *     summary="Update movie_photos",
+     *     description="-",
+     *     operationId="movie_photos/update",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *     @OA\RequestBody(
+     *          required=true,
+     *          description="form admin",
+     *          @OA\JsonContent(
+     *             required={"movie_id", "photo_image_file", "photo_image_url"},
+     *              @OA\Property(property="movie_id", type="string"),
+     *              @OA\Property(property="photo_image_file", type="image"),
+     *              @OA\Property(property="photo_image_url", type="string"),
+     *          ),
+     *      ),
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
+     * )
+     */
     public function update(Request $request, $id)
     {
         $moviePhoto = MoviePhoto::find($id);
@@ -126,7 +177,26 @@ class MoviePhotoController extends MainController
         $res = new MoviePhotoResource($moviePhoto);
         return $this->sendSuccess(200, 'Movie photo updated successfully', $res);
     }
-
+/**
+     * @OA\Delete(
+     *     path="/api/movie_photos/{id}",
+     *     tags={"Movie_Photos"},
+     *     summary="Delete movie_photos",
+     *     description="-",
+     *     operationId="movie_photos/delete",
+     *     @OA\Parameter(
+     *          name="id",
+     *          description="Id",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="string"
+     *          )
+     *     ),
+     *      @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
+     * )
+     */
     public function destroy($id)
     {
         $moviePhoto = MoviePhoto::find($id);

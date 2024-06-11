@@ -54,10 +54,8 @@ class MovieLanguageController extends MainController
      *              @OA\Property(property="language_code", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *        
+     *    @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
@@ -140,9 +138,8 @@ class MovieLanguageController extends MainController
      *              @OA\Property(property="language_code", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *     @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
@@ -189,9 +186,8 @@ class MovieLanguageController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
+     *      @OA\Response(response="200", description="Success"),
+     *         security={{"Bearer":{}}}
      *     )
      * )
      */
