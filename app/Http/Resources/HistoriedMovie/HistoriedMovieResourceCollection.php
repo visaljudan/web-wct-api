@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\HistoriedMovie;
 
+use App\Http\Resources\HistoriedMovie\HistoriedMovieResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class HistoriedMovieResourceCollection extends ResourceCollection
 {
-    /**
-     * Transform the resource collection into an array.
-     *
-     * @return array<int|string, mixed>
-     */
-    public function toArray(Request $request): array
+
+    public function toArray($request)
     {
-        return parent::toArray($request);
+        return (HistoriedMovieResource::collection($this->collection));
     }
 }

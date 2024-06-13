@@ -39,7 +39,7 @@ class MovieVideoController extends MainController
     }
     /**
      * @OA\Post(
-     *     path="/api/movie-videos",
+     *     path="/api/movie_videos",
      *     tags={"Movie-Videos"},
      *     summary="Create a new movie video",
      *     description="Create a new movie video with either a file upload or a URL.",
@@ -63,24 +63,8 @@ class MovieVideoController extends MainController
      *          ),
      *      ),
      *     @OA\Response(
-     *         response="201",
-     *         description="Movie video created successfully",
-     *         @OA\JsonContent(ref="#/components/schemas/MovieVideoResource")
-     *     ),
-     *     @OA\Response(
-     *         response="422",
-     *         description="Validation failed",
-     *         @OA\JsonContent(ref="#/components/schemas/Error")
-     *     ),
-     *     @OA\Response(
-     *         response="403",
-     *         description="Forbidden",
-     *         @OA\JsonContent(ref="#/components/schemas/Error")
-     *     ),
-     *     @OA\Response(
-     *         response="500",
-     *         description="Internal server error",
-     *         @OA\JsonContent(ref="#/components/schemas/Error")
+     *         response="default",
+     *         description="return array model movie-videos"
      *     ),
      *     security={{"Bearer":{}}}
      * )

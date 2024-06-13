@@ -583,6 +583,179 @@
                 ]
             }
         },
+        "/api/historied_movies": {
+            "get": {
+                "tags": [
+                    "Historied-Movies"
+                ],
+                "summary": "Get List Historied Movies",
+                "description": "Get a list of historied movies for the authenticated user.",
+                "operationId": "historied_movies",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Historied-Movies"
+                ],
+                "summary": "Save a Historied Movie",
+                "description": "Save a movie as historied for the authenticated user.",
+                "operationId": "save_historied_movie",
+                "requestBody": {
+                    "description": "Historied movie data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "movie_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "movie_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/historied_movies/{id}": {
+            "get": {
+                "tags": [
+                    "Historied-Movies"
+                ],
+                "summary": "Get a Historied Movie by ID",
+                "description": "Get details of a specific historied movie for the authenticated user.",
+                "operationId": "get_historied_movie_by_id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Historied Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Historied-Movies"
+                ],
+                "summary": "Update a Historied Movie",
+                "description": "Update details of a specific historied movie for the authenticated user.",
+                "operationId": "update_historied_movie",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Historied Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated historied movie data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id",
+                                    "movie_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    },
+                                    "movie_id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Historied-Movies"
+                ],
+                "summary": "Delete a Historied Movie",
+                "description": "Delete a specific historied movie for the authenticated user.",
+                "operationId": "delete_historied_movie",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Historied Movie ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            }
+        },
         "/api/languages": {
             "get": {
                 "tags": [
@@ -1998,34 +2171,75 @@
                         "description": "return array model movie-videos"
                     }
                 }
-            },
+            }
+        },
+        "/api/movie_videos": {
             "post": {
                 "tags": [
                     "Movie-Videos"
                 ],
-                "summary": "movie-videos",
-                "description": "'movie-videos",
-                "operationId": "'Movie-Videos",
+                "summary": "Create a new movie video",
+                "description": "Create a new movie video with either a file upload or a URL.",
+                "operationId": "createMovieVideo",
                 "requestBody": {
-                    "description": "form movie-videos",
+                    "description": "Movie video data",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
                                     "movie_id",
-                                    "title",
-                                    "video"
+                                    "type",
+                                    "official",
+                                    "subscription"
                                 ],
                                 "properties": {
                                     "movie_id": {
                                         "type": "string"
                                     },
-                                    "title": {
-                                        "type": "string"
+                                    "video_file": {
+                                        "type": "string",
+                                        "format": "binary",
+                                        "nullable": true
                                     },
-                                    "video": {
-                                        "type": "string"
+                                    "video_url": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "season_number": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "episode_number": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "part_number": {
+                                        "type": "integer",
+                                        "nullable": true
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "movie",
+                                            "trailer"
+                                        ]
+                                    },
+                                    "official": {
+                                        "type": "boolean"
+                                    },
+                                    "subscription": {
+                                        "type": "boolean"
+                                    },
+                                    "subscription_start_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "nullable": true
+                                    },
+                                    "subscription_end_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "nullable": true
                                     }
                                 },
                                 "type": "object"
@@ -2035,9 +2249,14 @@
                 },
                 "responses": {
                     "default": {
-                        "description": ""
+                        "description": "return array model movie-videos"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
         "/api/movie-videos/{id}": {
@@ -2148,46 +2367,6 @@
                 "responses": {
                     "default": {
                         "description": "return array model payments"
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Payments"
-                ],
-                "summary": "payments",
-                "description": "payments",
-                "operationId": "Payments",
-                "requestBody": {
-                    "description": "form payments",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "user_id",
-                                    "subscription_plan_id",
-                                    "payment_status"
-                                ],
-                                "properties": {
-                                    "user_id": {
-                                        "type": "string"
-                                    },
-                                    "subscription_plan_id": {
-                                        "type": "string"
-                                    },
-                                    "payment_status": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "default": {
-                        "description": ""
                     }
                 }
             }
