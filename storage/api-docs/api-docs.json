@@ -2855,7 +2855,25 @@
                 ]
             }
         },
-        "/api/saved-movies": {
+        "/api/saved_movies": {
+            "get": {
+                "tags": [
+                    "Saved-Movies"
+                ],
+                "summary": "Get List Artists Data",
+                "description": "enter your saved_movies here",
+                "operationId": "saved_movies",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Saved-Movies"
@@ -2887,10 +2905,15 @@
                     }
                 },
                 "responses": {
-                    "default": {
-                        "description": ""
+                    "200": {
+                        "description": "Success"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
         "/api/saved-movies/{id}": {
@@ -2917,7 +2940,9 @@
                         "description": "return model admin"
                     }
                 }
-            },
+            }
+        },
+        "/api/saved_movies/{id}": {
             "put": {
                 "tags": [
                     "Saved-Movies"
@@ -2960,10 +2985,15 @@
                     }
                 },
                 "responses": {
-                    "default": {
-                        "description": ""
+                    "200": {
+                        "description": "Success"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -2984,13 +3014,18 @@
                     }
                 ],
                 "responses": {
-                    "default": {
-                        "description": ""
+                    "200": {
+                        "description": "Success"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ]
             }
         },
-        "/api/subscription-plans": {
+        "/api/subscription_plans": {
             "get": {
                 "tags": [
                     "Subscription-Plans"
@@ -3054,7 +3089,7 @@
                 ]
             }
         },
-        "/api/subscription-plans/{id}": {
+        "/api/subscription_plans/{id}": {
             "get": {
                 "tags": [
                     "Subscription-Plans"

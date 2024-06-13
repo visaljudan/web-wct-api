@@ -12,6 +12,17 @@ use Illuminate\Support\Facades\Validator;
 
 class SavedMovieController extends MainController
 {
+     /**
+     * @OA\Get(
+     *     path="/api/saved_movies",
+     *     tags={"Saved-Movies"},
+     *     summary="Get List Artists Data",
+     *     description="enter your saved_movies here",
+     *     operationId="saved_movies",
+     *     @OA\Response(response="200", description="Success"),
+     *     security={{"Bearer":{}}}
+     * )
+     */
     public function index(Request $request)
     {
         // Get the token from the request header
@@ -47,7 +58,7 @@ class SavedMovieController extends MainController
 
     /**
      * @OA\Post(
-     *     path="/api/saved-movies",
+     *     path="/api/saved_movies",
      *     tags={"Saved-Movies"},
      *     summary="saved-movies",
      *     description="saved-movies",
@@ -61,11 +72,8 @@ class SavedMovieController extends MainController
      *              @OA\Property(property="movie_id", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *        
-     *     )
+     *     @OA\Response(response="200", description="Success"),
+     *     security={{"Bearer":{}}}
      * )
      */
     public function store(Request $request)
@@ -177,7 +185,7 @@ class SavedMovieController extends MainController
 
     /**
      * @OA\Put(
-     *     path="/api/saved-movies/{id}",
+     *     path="/api/saved_movies/{id}",
      *     tags={"Saved-Movies"},
      *     summary="Update saved-movies",
      *     description="-",
@@ -200,10 +208,8 @@ class SavedMovieController extends MainController
      *              @OA\Property(property="movie_id", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *     @OA\Response(response="200", description="Success"),
+     *     security={{"Bearer":{}}}
      * )
      */
     public function update(Request $request, $movieId)
@@ -272,7 +278,7 @@ class SavedMovieController extends MainController
 
     /**
      * @OA\Delete(
-     *     path="/api/saved-movies/{id}",
+     *     path="/api/saved_movies/{id}",
      *     tags={"Saved-Movies"},
      *     summary="Delete saved-movies",
      *     description="-",
@@ -286,10 +292,8 @@ class SavedMovieController extends MainController
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *     )
+     *    @OA\Response(response="200", description="Success"),
+     *     security={{"Bearer":{}}}
      * )
      */
 
@@ -329,7 +333,7 @@ class SavedMovieController extends MainController
 
         // Delete the saved movie
         $savedMovie->delete();
-
+        
         // Return a success response
         return $this->sendSuccess(200, 'Saved movie deleted successfully');
     }

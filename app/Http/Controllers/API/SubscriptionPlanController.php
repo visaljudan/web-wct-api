@@ -17,7 +17,7 @@ class SubscriptionPlanController extends MainController
 {
     /**
      * @OA\Get(
-     *     path="/api/subscription-plans",
+     *     path="/api/subscription_plans",
      *     tags={"Subscription-Plans"},
      *     summary="Get List subscription-plans Data",
      *     description="enter your subscription-plans here",
@@ -41,7 +41,7 @@ class SubscriptionPlanController extends MainController
     }
     /**
      * @OA\Post(
-     *     path="/api/subscription-plans",
+     *     path="/api/subscription_plans",
      *     tags={"Subscription-Plans"},
      *     summary="subscription-plans",
      *     description="subscription-plans",
@@ -91,7 +91,7 @@ class SubscriptionPlanController extends MainController
 
     /**
      * @OA\Get(
-     *     path="/api/subscription-plans/{id}",
+     *     path="/api/subscription_plans/{id}",
      *     tags={"Subscription-Plans"},
      *     summary="Detail",
      *     description="-",
@@ -128,7 +128,7 @@ class SubscriptionPlanController extends MainController
 
     /**
      * @OA\Put(
-     *     path="/api/subscription-plans/{id}",
+     *     path="/api/subscription_plans/{id}",
      *     tags={"Subscription-Plans"},
      *     summary="Update subscription-plans",
      *     description="-",
@@ -201,7 +201,7 @@ class SubscriptionPlanController extends MainController
 
     /**
      * @OA\Delete(
-     *     path="/api/subscription-plans/{id}",
+     *     path="/api/subscription_plans/{id}",
      *     tags={"Subscription-Plans"},
      *     summary="Delete subscription-plans",
      *     description="-",
