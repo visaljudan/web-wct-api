@@ -274,7 +274,6 @@ class RatedMovieController extends MainController
         return $this->destroyRating($user, $ratedMovie);
     }
 
-
     private function destroyRating($user, $ratedMovie)
     {
         $movieId = $ratedMovie->movie_id;

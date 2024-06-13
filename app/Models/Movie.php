@@ -15,22 +15,16 @@ class Movie extends Model
         'overview',
         'run_time',
         'release_date',
-        'total_likes',
+        'total_raters',
         'total_ratings',
         'average_rating',
-        'trailer_url',
         'popularity',
-        'poster_image',
+        'poster_image_file',
+        'poster_image_url',
         'cover_image',
         'terms_status',
         'upload_status',
         'last_upload_date',
-        'user_subscription',
-        'expire_subscription',
-    ];
-
-    protected $casts = [
-        'user_subscription' => 'boolean',
     ];
 
     public function tv_show()

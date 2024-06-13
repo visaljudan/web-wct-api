@@ -21,8 +21,6 @@ class PaymentResource extends JsonResource
             'payment_method' => $this->payment_method,
             'receipt_url' => $this->receipt_url,
             'payment_status' => $this->payment_status,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
         ];
     }
 }

@@ -1,8 +1,10 @@
 <?php
-
+//API done
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\MainController;
+use App\Http\Resources\Payment\PaymentResource;
+use App\Http\Resources\Payment\PaymentResourceCollection;
 use App\Models\Payment;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
@@ -16,7 +18,57 @@ use Stripe\Charge;
 class PaymentController extends MainController
 {
 
-    public function charge(Request $request)
+    /**
+     * @OA\Get(
+     *     path="/api/payments",
+     *     tags={"Payments"},
+     *     summary="Get List Artists Data",
+     *     description="enter your Artists here",
+     *     operationId="payments",
+     *     @OA\Response(
+     *         response="default",
+     *         description="return array model payments"
+     *     )
+     * )
+     */
+    public function index(Request $request)
+    {
+        // Get the token from the request header
+        $token = $request->header('Authorization');
+
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Check if the user is an admin
+        if ($user->role === 'Admin') {
+            // Return all payments for admin
+            $payments = Payment::all();
+        } else {
+            // Return only payments associated with the user
+            $payments = Payment::where('user_id', $user->id)->get();
+        }
+
+        if ($payments->isEmpty()) {
+            return $this->sendError(400, 'No Records Found');
+        }
+
+        // Return the rated movies
+        $res = new PaymentResourceCollection($payments);
+        return $this->sendSuccess(200, 'Payments found', $res);
+    }
+
+    public function store(Request $request)
     {
         // Get the token from the request header
         $token = $request->header('Authorization');
@@ -67,6 +119,7 @@ class PaymentController extends MainController
         }
 
         $amount = $subscriptionPlan->subscription_plan_price;
+        $duration = $subscriptionPlan->subscription_plan_duration;
 
         // Get the length of the card number
         $cardNumberLength = strlen($request->card_number);
@@ -97,6 +150,7 @@ class PaymentController extends MainController
                     'transaction_id' => $charge->id,
                     'payment_method' => $charge->payment_method,
                     'receipt_url' => $charge->receipt_url,
+                    // 'stripeToken' => $token,
                     'card_number' => $maskedCardNumber,
                     'expiry' => $request->expiry,
                     'name' => $request->name,
@@ -111,13 +165,15 @@ class PaymentController extends MainController
                 // Store subscription details in user_subscription table
                 UserSubscription::create([
                     'user_id' => $user->id,
+                    'payment_id' => $payment->id, // Add payment ID here
                     'subscription_plan_id' => $request->subscription_plan_id,
                     'subscription_start_date' => now(),
-                    'subscription_end_date' => now()->addDays(30),
+                    'subscription_end_date' => now()->addDays($duration),
                     'subscription_status' => 'running',
                 ]);
 
-                return $this->sendSuccess(200, 'Payment success', $payment);
+                $res = new PaymentResource($payment);
+                return $this->sendSuccess(200, 'Payment success', $res);
             } else {
                 return $this->sendError(500, 'Payment failed');
             }
@@ -126,127 +182,6 @@ class PaymentController extends MainController
         }
     }
 
-
-
-    /**
-     * @OA\Get(
-     *     path="/api/payments",
-     *     tags={"Payments"},
-     *     summary="Get List Artists Data",
-     *     description="enter your Artists here",
-     *     operationId="payments",
-     *     @OA\Response(
-     *         response="default",
-     *         description="return array model payments"
-     *     )
-     * )
-     */
-    // /**
-    //  * Display a listing of the resource.
-    //  */
-    public function index()
-    {
-        $payments = Payment::all();
-
-        if ($payments->count() > 0) {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 200,
-                'payments' => $payments
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 400,
-                'message' => 'No Record Found'
-            ], 400);
-        }
-    }
-    /**
-     * @OA\Post(
-     *     path="/api/payments",
-     *     tags={"Payments"},
-     *     summary="payments",
-     *     description="payments",
-     *     operationId="Payments",
-     *     @OA\RequestBody(
-     *          required=true,
-     *          description="form payments",
-     *          @OA\JsonContent(
-     *            required={"user_id", "subscription_plan_id", "payment_status"},
-     *              @OA\Property(property="user_id", type="string"),
-     *              @OA\Property(property="subscription_plan_id", type="string"),
-     *              @OA\Property(property="payment_status", type="string"),
-     *          ),
-     *      ),
-     *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *        
-     *     )
-     * )
-     */
-    // /**
-    //  * Store a newly created payment in storage.
-    //  */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
-            'subscription_plan_id' => 'required|exists:subscription_plans,id',
-            'payment_status' => 'required|in:Success,Fail'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $existingPayment = Payment::where('user_id', $request->user_id)
-            ->where('payment_status', 'Success')
-            ->first();
-
-        if ($existingPayment) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Cannot add more payments while previous payment is successful.',
-            ], 422);
-        }
-
-        $payment = Payment::create($request->all());
-
-        if ($request->payment_status === 'Fail') {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Payment failed.',
-            ], 422);
-        }
-
-        $user = User::find($request->user_id);
-
-        $subscriptionPlan = SubscriptionPlan::find($request->subscription_plan_id);
-
-        $user->role = 'Subscription User';
-
-        $user->subscription_plan_id = $request->subscription_plan_id;
-
-        $user->subscription_start_date = now();
-
-        $user->subscription_end_date = now()->addDays($subscriptionPlan->subscription_plan_duration);
-
-        $user->save();
-
-        return response()->json([
-            'success' => true,
-            'statusCode' => 201,
-            'payment' => $payment
-        ], 201);
-    }
 
     /**
      * @OA\Get(
@@ -270,30 +205,48 @@ class PaymentController extends MainController
      *     )
      * )
      */
-    // /**
-    //  * Display the specified payment.
-    //  *
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
-    public function show($id)
+    public function show(Request $request)
     {
-        $payment = Payment::find($id);
+        // Get the token from the request header
+        $token = $request->header('Authorization');
 
-        if (!$payment) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Payment not found'
-            ], 404);
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
         }
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'payment' => $payment
-        ], 200);
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Check if the user is an admin
+        if ($user->role === 'Admin') {
+            // Return all payments for admin
+            $payments = Payment::where('payment_status', "success")->get();
+            if ($payments->isEmpty()) {
+                return $this->sendError(404, 'No payments found');
+            }
+            $res = new PaymentResourceCollection($payments);
+        } else {
+            // Return only payments associated with the user
+            $payment = Payment::where('user_id', $user->id)
+                ->where('payment_status', "success")
+                ->first();
+            if (!$payment) {
+                return $this->sendError(404, 'Payment not found');
+            }
+            $res = new PaymentResource($payment);
+        }
+
+        return $this->sendSuccess(200, 'Payment(s) found', $res);
     }
+
+
     /**
      * @OA\Delete(
      *     path="/api/payments/{id}",
@@ -316,28 +269,34 @@ class PaymentController extends MainController
      *     )
      * )
      */
-    // /**
-    //  * Remove the specified payment from storage.
-    //  *
-    //  * @param  int  $id
-    //  * @return \Illuminate\Http\Response
-    //  */
     public function destroy($id)
     {
+        // Find the payment by ID
         $payment = Payment::find($id);
 
+        // Check if the payment exists
         if (!$payment) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Payment not found'
-            ], 404);
+            return $this->sendError(404, 'Payment not found');
         }
 
+        // Check if the user is authorized to perform this action
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
+        // Find the associated user subscription
+        $userSubscription = UserSubscription::where('user_id', $payment->user_id)
+            ->where('payment_id', $payment->id)
+            ->first();
+
+        // Delete the payment
         $payment->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Payment deleted successfully'
-        ]);
+        // Delete the user subscription if it exists
+        if ($userSubscription) {
+            $userSubscription->delete();
+        }
+
+        return $this->sendSuccess(200, 'Payment and associated subscription deleted successfully');
     }
 }

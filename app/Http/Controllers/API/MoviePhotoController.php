@@ -63,27 +63,52 @@ class MoviePhotoController extends MainController
      */
     public function store(Request $request)
     {
+        // Validate the request data
         $validator = Validator::make($request->all(), [
             'movie_id' => 'required|exists:movies,id',
-            'photo_image_file' => 'nullable|required_without:photo_image_url|image|mimes:jpeg,png,jpg,gif,svg',
+            'photo_image_file' => 'nullable|required_without:photo_image_url|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as per your requirements
             'photo_image_url' => 'nullable|required_without:photo_image_file|string|url',
         ]);
 
-
+        // Check if validation fails
         if ($validator->fails()) {
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
+        // Check user permissions
         if (!Gate::allows('admin', User::class)) {
             return $this->sendError(403, 'You are not allowed');
         }
 
-        $moviePhoto = MoviePhoto::create($request->all());
+        try {
+            // Initialize variables for photo_image_url
+            $photo_image = null;
 
-        $res = new MoviePhotoResource($moviePhoto);
-        return $this->sendSuccess(201, 'Movie photo uploaded successfully', $res);
+            // Check if file is present before attempting to store
+            if ($request->hasFile('photo_image_file')) {
+                $file = $request->file('photo_image_file');
+                $imagePath = $file->store('img'); // Store in 'img' directory
+                $photo_image = env('AWS_CLOUDFRONT_URL') . "/" . $imagePath; // Example CloudFront URL
+            } elseif ($request->has('photo_image_url')) {
+                // Use provided URL if no file is uploaded
+                $photo_image = $request->photo_image_url;
+            }
+
+            // Create the movie photo record
+            $moviePhoto = MoviePhoto::create([
+                'movie_id' => $request->movie_id,
+                'photo_image' => $photo_image,
+            ]);
+
+            // Return a success response
+            $res = new MoviePhotoResource($moviePhoto);
+            return $this->sendSuccess(201, 'Movie photo created successfully', $res);
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return $this->sendError(500, 'Failed to store movie photo');
+        }
     }
- /**
+    /**
      * @OA\Get(
      *     path="/api/movie_photos/{id}",
      *     tags={"Movie_Photos"},
@@ -116,7 +141,7 @@ class MoviePhotoController extends MainController
         $res = new MoviePhotoResource($moviePhoto);
         return $this->sendSuccess(200, 'Movie photo found', $res);
     }
-/**
+    /**
      * @OA\Put(
      *     path="/api/movie_photos/{id}",
      *     tags={"Movie_Photos"},
@@ -148,36 +173,61 @@ class MoviePhotoController extends MainController
      */
     public function update(Request $request, $id)
     {
+
+        // Find the movie photo record
         $moviePhoto = MoviePhoto::find($id);
 
+
         if (!$moviePhoto) {
-            $this->sendError(404, 'Movie photo not found');
+            return $this->sendError(404, 'Movie Photo not found');
         }
 
+        // Validate the request data
         $validator = Validator::make($request->all(), [
-            'movie_id' => 'exists:movies,id',
-            'photo_image_file' => 'nullable|required_without:photo_image_url|image|mimes:jpeg,png,jpg,gif,svg',
-            'photo_image_url' => 'nullable|required_without:photo_image_file|string|url',
+            'movie_id' => 'required|exists:movies,id',
+            'photo_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as per your requirements
+            'photo_image_url' => 'nullable|string|url',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
+        // Check user permissions
         if (!Gate::allows('admin', User::class)) {
             return $this->sendError(403, 'You are not allowed');
         }
 
+        try {
 
-        $moviePhoto->movie_id  = $request->movie_id;
-        $moviePhoto->photo_image_file = $request->photo_image_file;
-        $moviePhoto->photo_image_url = $request->photo_image_url;
-        $moviePhoto->save();
+            // Handle photo_image_file update if provided
+            if ($request->hasFile('photo_image_file')) {
+                $file = $request->file('photo_image_file');
+                $imagePath = $file->store('img'); // Store in 'img' directory
+                $photo_image = env('AWS_CLOUDFRONT_URL') . "/" . $imagePath; // Example CloudFront URL
+                $moviePhoto->photo_image = $photo_image;
+            } elseif ($request->has('photo_image_url')) {
+                // Update photo_image_url if provided
+                $moviePhoto->photo_image = $request->photo_image_url;
+            }
 
-        $res = new MoviePhotoResource($moviePhoto);
-        return $this->sendSuccess(200, 'Movie photo updated successfully', $res);
+            // Update movie_id if provided
+            $moviePhoto->movie_id = $request->movie_id;
+
+            // Save the updated movie photo record
+            $moviePhoto->save();
+
+            // Return a success response
+            $res = new MoviePhotoResource($moviePhoto);
+            return $this->sendSuccess(200, 'Movie photo updated successfully', $res);
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return $this->sendError(500, 'Failed to update movie photo');
+        }
     }
-/**
+
+    /**
      * @OA\Delete(
      *     path="/api/movie_photos/{id}",
      *     tags={"Movie_Photos"},

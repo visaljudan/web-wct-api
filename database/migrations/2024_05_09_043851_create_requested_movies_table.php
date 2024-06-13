@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('requested_movies', function (Blueprint $table) {
@@ -17,16 +14,12 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->string('image_path')->nullable();
             $table->string('url')->nullable();
-            $table->string('status')->nullable();
+            $table->string('status')->default('padding');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('requested_movies');

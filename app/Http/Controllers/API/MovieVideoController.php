@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\MainController;
+use App\Http\Resources\MovieVideo\MovieVideoResource;
+use App\Http\Resources\MovieVideo\MovieVideoResourceCollection;
 use App\Models\MovieVideo;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 
-class MovieVideoController extends Controller
+class MovieVideoController extends MainController
 {
     /**
      * @OA\Get(
@@ -26,18 +29,12 @@ class MovieVideoController extends Controller
     public function index()
     {
         $movieVideos = MovieVideo::all();
+
         if ($movieVideos->count() > 0) {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 200,
-                'mediaTypes' => $movieVideos
-            ], 200);
+            $res = new MovieVideoResourceCollection($movieVideos);
+            return $this->sendSuccess(200, 'Movie video found', $res);
         } else {
-            return response()->json([
-                'success' => true,
-                'statusCode' => 400,
-                'message' => 'No Record Found'
-            ], 400);
+            return $this->sendError(400, 'No Record Found');
         }
     }
     /**
@@ -64,54 +61,65 @@ class MovieVideoController extends Controller
      *     )
      * )
      */
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'movie_id' => 'required|exists:movies,id',
-            // 'title' => 'required|string|max:255',
-            'video' => 'required|file|mimes:mp4', // Example: Allow only MP4 files
+            'video_file' => 'nullable|required_without:video_url|file|mimes:mp4,avi,mov',
+            'video_url' => 'nullable|required_without:video_file|string',
+            'season_number' => 'nullable|integer',
+            'episode_number' => 'nullable|integer',
+            'part_number' => 'nullable|integer',
+            'type' => 'required|string|in:movie,trailer',
+            'official' => 'required|boolean',
+            'subscription' => 'required|boolean',
+            'subscription_start_date' => 'nullable|date',
+            'subscription_end_date' => 'nullable|date',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Validation failed',
-                'data' => $validator->errors(),
-            ], 422);
+            return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
-        $file = $request->file('video');
-        $videoPath = $file->store('videos');
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed');
+        }
 
-        // Generate CloudFront URL
-        $cloudFrontUrl = $this->getCloudFrontUrl($videoPath);
+        try {
+            $video = null;
+            // Check if file is present before attempting to store
+            if ($request->hasFile('video_file')) {
+                $file = $request->file('video_file');
+                $videoPath = $file->store('videos');
 
-        // Store video details in your database
-        $movieVideo = MovieVideo::create([
-            'movie_id' => $request->movie_id,
-            // 'title' => $request->title,
-            'video_path' => $videoPath,
-        ]);
+                $video = env('AWS_CLOUDFRONT_URL') . "/" . $videoPath;
+            } else {
+                $video = $request->video_url;
+            }
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 201,
-            'message' => 'Movie video created successfully',
-            'data' => [
-                'movieVideo' => $movieVideo,
-                'cloudFrontUrl' => $cloudFrontUrl,
-            ],
-        ], 201);
+            $movieVideo = MovieVideo::create([
+                'movie_id' => $request->movie_id,
+                // 'video_file' => $video,
+                // 'video_url' => $request->video_url,
+                'video' => $video,
+                'season_number' => $request->season_number,
+                'episode_number' => $request->episode_number,
+                'part_number' => $request->part_number,
+                'type' => $request->type,
+                'official' => $request->official,
+                'subscription' => $request->subscription,
+                'subscription_start_date' => $request->subscription_start_date,
+                'subscription_end_date' => $request->subscription_end_date,
+            ]);
+
+            $res = new MovieVideoResource($movieVideo);
+            return $this->sendSuccess(201, 'Movie video created successfully', $res);
+        } catch (\Exception $e) {
+            return $this->sendError(500, 'Failed to store movie video');
+        }
     }
 
-    private function getCloudFrontUrl($videoPath)
-    {
-        $s3Url = env('AWS_CLOUDFRONT_URL') . "/" . $videoPath;
-        $cloudFrontUrl = str_replace(env('AWS_S3_BUCKET') . '.s3.amazonaws.com', env('AWS_CLOUDFRONT_URL'), $s3Url);
-        return $s3Url;
-    }
+
 
     /**
      * @OA\Get(
@@ -135,26 +143,16 @@ class MovieVideoController extends Controller
      *     )
      * )
      */
-    // /**
-    //  * Display the specified resource.
-    //  */
     public function show($id)
     {
         $movieVideo = MovieVideo::find($id);
 
         if (!$movieVideo) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Movie video not found',
-            ], 404);
+            return $this->sendError(404, 'Movie video not found');
         }
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'movieVideo' => $movieVideo,
-        ], 200);
+        $res = new MovieVideoResource($movieVideo);
+        return $this->sendSuccess(200, 'Movie video found', $res);
     }
     /**
      * @OA\Put(
@@ -187,50 +185,78 @@ class MovieVideoController extends Controller
      *     )
      * )
      */
-    // /**
-    //  * Update the specified resource in storage.
-    //  */
     public function update(Request $request, $id)
     {
         $movieVideo = MovieVideo::find($id);
 
         if (!$movieVideo) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 404,
-                'message' => 'Movie video not found',
-            ], 404);
+            return $this->sendError(404,  'Movie video not found');
         }
 
+        // Validate the request data
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string|max:255',
-            'video' => 'file|mimes:mp4|max:2048', // Example: Allow only MP4 files with max size 2048 KB
+            'movie_id' => 'required|exists:movies,id',
+            'video_file' => 'nullable|file|mimes:mp4,avi,mov',
+            'video_url' => 'nullable|string',
+            'season_number' => 'nullable|integer',
+            'episode_number' => 'nullable|integer',
+            'part_number' => 'nullable|integer',
+            'type' => 'required|string|in:movie,trailer',
+            'official' => 'required|boolean',
+            'subscription' => 'required|boolean',
+            'subscription_start_date' => 'nullable|date',
+            'subscription_end_date' => 'nullable|date',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'statusCode' => 422,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
-        // if ($request->hasFile('video')) {
-        //     $videoPath = $request->file('video')->store('videos');
-        //     Storage::delete($movieVideo->video_path); // Delete old video file
-        //     $movieVideo->video_path = $videoPath;
-        // }
+        // Check user permissions
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed');
+        }
 
-        $movieVideo->title = $request->title;
-        $movieVideo->save();
+        try {
+            // Find the movie video record
+            $movieVideo = MovieVideo::findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'statusCode' => 200,
-            'message' => 'Movie video updated successfully',
-            'movieVideo' => $movieVideo,
-        ], 200);
+            // Update movie_id if provided
+            $movieVideo->movie_id = $request->movie_id;
+
+            // Handle video_file update if provided
+            if ($request->hasFile('video_file')) {
+                $file = $request->file('video_file');
+                $videoPath = $file->store('videos');
+
+                $videoUrl = env('AWS_CLOUDFRONT_URL') . "/" . $videoPath;
+                $movieVideo->video = $videoUrl;
+            } elseif ($request->has('video_url')) {
+                // Update video_url if provided
+                $movieVideo->video = $request->video_url;
+            }
+
+            // Update other fields
+            $movieVideo->season_number = $request->season_number;
+            $movieVideo->episode_number = $request->episode_number;
+            $movieVideo->part_number = $request->part_number;
+            $movieVideo->type = $request->type;
+            $movieVideo->official = $request->official;
+            $movieVideo->subscription = $request->subscription;
+            $movieVideo->subscription_start_date = $request->subscription_start_date;
+            $movieVideo->subscription_end_date = $request->subscription_end_date;
+
+            // Save the updated movie video record
+            $movieVideo->save();
+
+            // Return a success response
+            $res = new MovieVideoResource($movieVideo);
+            return $this->sendSuccess(200, 'Movie video updated successfully', $res);
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return $this->sendError(500, 'Failed to update movie video');
+        }
     }
     /**
      * @OA\Delete(
@@ -277,5 +303,18 @@ class MovieVideoController extends Controller
             'statusCode' => 200,
             'message' => 'Movie video deleted successfully',
         ], 200);
+    }
+
+
+    public function movieIdTrailer($movieId)
+    {
+        $movieVideos = MovieVideo::where('movie_id', $movieId)->where('type', 'trailer')->get();
+
+        if ($movieVideos->isEmpty()) {
+            return $this->sendError(404, "This movie doesn't have any videos.");
+        }
+
+        $res = new MovieVideoResourceCollection($movieVideos);
+        return $this->sendSuccess(200, 'Movie video found', $res);
     }
 }

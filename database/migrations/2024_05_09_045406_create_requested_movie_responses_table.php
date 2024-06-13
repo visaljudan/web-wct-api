@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('requested_movie_id');
             $table->foreign('requested_movie_id')->references('id')->on('requested_movies')->onDelete('cascade');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('user_id')->on('requested_movies')->onDelete('cascade');
             $table->text('response_message');
             $table->string('response_status');
             $table->timestamps();

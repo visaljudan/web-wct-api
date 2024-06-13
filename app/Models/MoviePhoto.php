@@ -10,8 +10,9 @@ class MoviePhoto extends Model
     use HasFactory;
     protected $fillable = [
         'movie_id',
-        'photo_image_file',
-        'photo_image_url'
+        // 'photo_image_file',
+        // 'photo_image_url',
+        'photo_image',
     ];
 
     public function movie()
@@ -19,8 +20,8 @@ class MoviePhoto extends Model
         return $this->belongsTo(Movie::class);
     }
 
-    public function getPhotoImageAttribute()
-    {
-        return $this->photo_image_url ?: $this->photo_image_file;
-    }
+    // public function getPhotoImageAttribute()
+    // {
+    //     return $this->photo_image_url ?: $this->photo_image_file;
+    // }
 }

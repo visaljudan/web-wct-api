@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Events\MessageSent;
 use App\Http\Controllers\MainController;
 use App\Http\Resources\Movie\MovieResource;
 use App\Models\Movie;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Events\NewMovieEvent;
 use App\Http\Resources\Movie\MovieResourceCollection;
-use App\Http\Resources\MovieGenre\MovieGenreResourceCollection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Redis;
 
 class MovieController extends MainController
 {
@@ -81,35 +76,85 @@ class MovieController extends MainController
      */
     public function store(Request $request)
     {
+        // Validate the request data
         $validator = Validator::make($request->all(), [
-            'title' => 'required|string',
+            'tv_show_id' => 'nullable|exists:tv_shows,id',
+            'title' => 'required|string|max:255',
             'overview' => 'nullable|string',
             'run_time' => 'nullable|integer',
             'release_date' => 'nullable|date',
-            'total_likes' => 'nullable|integer',
+            'poster_image_file' => 'nullable|required_without:poster_image_url|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as per your requirements
+            'poster_image_url' => 'nullable|required_without:poster_image_file|url',
+            'cover_image_file' => 'nullable|required_without:cover_image_url|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as per your requirements
+            'cover_image_url' => 'nullable|required_without:cover_image_file|url',
+            'total_raters' => 'nullable|integer',
             'total_ratings' => 'nullable|integer',
-            'average_rating' => 'nullable|numeric',
-            'poster_image' => 'nullable|string',
-            'cover_image' => 'nullable|string',
-            'trailer_url' => 'nullable|string',
+            'average_rating' => 'nullable|numeric|min:0|max:10',
+            'popularity' => 'nullable|integer',
+            'terms_status' => 'nullable|string|in:public,private',
+            'upload_status' => 'nullable|string',
             'last_upload_date' => 'nullable|date',
-            'subscription_only' => 'nullable|boolean',
-            'expired_subscription_only' => 'nullable|date',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
-            return $this->sendError(422, 'Validation failed', $validator->errors());
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
+        // Check user permissions
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
-        $movie = Movie::create($request->all());
+        try {
+            $poster_image = null;
+            $cover_image = null;
 
-        $res = new MovieResource($movie);
-        return $this->sendSuccess(201, 'Movie created successfully', $res);
+            // Handle poster image file upload
+            if ($request->hasFile('poster_image_file')) {
+                $posterImageFile = $request->file('poster_image_file');
+                $posterImagePath = $posterImageFile->store('img'); // Store in 'img' directory
+                $poster_image = env('AWS_CLOUDFRONT_URL') . '/' . $posterImagePath; // Example CloudFront URL
+            } else {
+                $poster_image = $request->poster_image_url;
+            }
+
+            // Handle cover image file upload
+            if ($request->hasFile('cover_image_file')) {
+                $coverImageFile = $request->file('cover_image_file');
+                $coverImagePath = $coverImageFile->store('img'); // Store in 'img' directory
+                $cover_image = env('AWS_CLOUDFRONT_URL') . '/' . $coverImagePath; // Example CloudFront URL
+            } else {
+                $cover_image = $request->cover_image_url;
+            }
+
+            // Create the movie record
+            $movie = Movie::create([
+                'tv_show_id' => $request->tv_show_id,
+                'title' => $request->title,
+                'overview' => $request->overview,
+                'run_time' => $request->run_time,
+                'release_date' => $request->release_date,
+                'poster_image' => $poster_image,
+                'cover_image' => $cover_image,
+                'total_raters' => $request->total_raters,
+                'total_ratings' => $request->total_ratings,
+                'average_rating' => $request->average_rating,
+                'popularity' => $request->popularity,
+                'terms_status' => $request->terms_status,
+                'upload_status' => $request->upload_status,
+                'last_upload_date' => $request->last_upload_date,
+            ]);
+
+            // Return a success response
+            $res = new MovieResource($movie);
+            return $this->sendSuccess(201, 'Movie created successfully', $res);
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return $this->sendError(500, 'Failed to store movie');
+        }
     }
+
     /**
      * @OA\Get(
      *     path="/api/movies/{id}",
@@ -194,35 +239,81 @@ class MovieController extends MainController
         if (!$movie) {
             return $this->sendError(404, 'Movie not found');
         }
-
         $validator = Validator::make($request->all(), [
-            'title' => 'nullable|string',
+            'tv_show_id' => 'nullable|exists:tv_shows,id',
+            'title' => 'required|string|max:255',
             'overview' => 'nullable|string',
             'run_time' => 'nullable|integer',
             'release_date' => 'nullable|date',
-            'total_likes' => 'nullable|integer',
+            'poster_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as per your requirements
+            'poster_image_url' => 'nullable|url',
+            'cover_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as per your requirements
+            'cover_image_url' => 'nullable|url',
+            'total_raters' => 'nullable|integer',
             'total_ratings' => 'nullable|integer',
-            'average_rating' => 'nullable|numeric',
-            'poster_image' => 'nullable|string',
-            'cover_image' => 'nullable|string',
-            'trailer_url' => 'nullable|string',
+            'average_rating' => 'nullable|numeric|min:0|max:10',
+            'popularity' => 'nullable|integer',
+            'terms_status' => 'nullable|string|in:public,private',
+            'upload_status' => 'nullable|string',
             'last_upload_date' => 'nullable|date',
-            'subscription_only' => 'nullable|boolean',
-            'expired_subscription_only' => 'nullable|date',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
-            return $this->sendError(422, 'Validation failed', $validator->errors());
+            return response()->json(['error' => $validator->errors()], 422);
         }
 
+        // Check user permissions
         if (!Gate::allows('admin', User::class)) {
-            return $this->sendError(403, 'You are not allowed', !Gate::allows('admin'));
+            return $this->sendError(403, 'You are not allowed');
         }
 
-        $movie->update($request->all());
+        try {
 
-        $res = new MovieResource($movie);
-        return $this->sendSuccess(200, 'Movie updated successfully', $res);
+            // Handle poster image file upload
+            if ($request->hasFile('poster_image_file')) {
+                $posterImageFile = $request->file('poster_image_file');
+                $posterImagePath = $posterImageFile->store('img'); // Store in 'img' directory
+                $poster_image = env('AWS_CLOUDFRONT_URL') . '/' . $posterImagePath; // Example CloudFront URL
+                $movie->poster_image = $poster_image;
+            } elseif ($request->has('poster_image_url')) {
+                $movie->poster_image = $request->poster_image_url;
+            }
+
+            // Handle cover image file upload
+            if ($request->hasFile('cover_image_file')) {
+                $coverImageFile = $request->file('cover_image_file');
+                $coverImagePath = $coverImageFile->store('img'); // Store in 'img' directory
+                $cover_image = env('AWS_CLOUDFRONT_URL') . '/' . $coverImagePath; // Example CloudFront URL
+                $movie->cover_image = $cover_image;
+            } elseif ($request->has('cover_image_url')) {
+                $movie->cover_image = $request->cover_image_url;
+            }
+
+            // Update other fields
+            $movie->tv_show_id = $request->tv_show_id;
+            $movie->title = $request->title;
+            $movie->overview = $request->overview;
+            $movie->run_time = $request->run_time;
+            $movie->release_date = $request->release_date;
+            $movie->total_raters = $request->total_raters;
+            $movie->total_ratings = $request->total_ratings;
+            $movie->average_rating = $request->average_rating;
+            $movie->popularity = $request->popularity;
+            $movie->terms_status = $request->terms_status;
+            $movie->upload_status = $request->upload_status;
+            $movie->last_upload_date = $request->last_upload_date;
+
+            // Save the updated movie record
+            $movie->save();
+
+            // Return a success response
+            $res = new MovieResource($movie);
+            return $this->sendSuccess(200, 'Movie updated successfully', $res);
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return $this->sendError(500, 'Failed to update movie');
+        }
     }
     /**
      * @OA\Delete(
@@ -254,11 +345,16 @@ class MovieController extends MainController
             return $this->sendError(404, 'Movie not found');
         }
 
+        if (!Gate::allows('admin', User::class)) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
         $movie->delete();
 
         return $this->sendSuccess(2000, 'Movie deleted successfully');
     }
 
+    //Lastest
     public function latest()
     {
         $latestMovies = Movie::orderBy('release_date', 'desc')->get();
@@ -271,6 +367,7 @@ class MovieController extends MainController
         return $this->sendSuccess(200, 'Latest movies found', $latestMovies);
     }
 
+    //Popular
     public function popular()
     {
         $popularMovies = Movie::orderBy('popularity', 'desc')->get();
@@ -283,6 +380,7 @@ class MovieController extends MainController
         return $this->sendSuccess(200, 'Latest movies found', $res);
     }
 
+    //Top Rate
     public function topRated()
     {
         $topRatedMovies = Movie::orderBy('average_rating', 'desc')
@@ -297,7 +395,7 @@ class MovieController extends MainController
         return $this->sendSuccess(200, 'Top-rated movies retrieved successfully', $res);
     }
 
-
+    //TV-Show
     public function tvShow($tvShowId)
     {
         $movies = Movie::where('tv_show_id', $tvShowId)->get();
@@ -310,17 +408,11 @@ class MovieController extends MainController
         return $this->sendSuccess(200, 'TV Show Genres Found', $res);
     }
 
-
+    //Year
     public function year($year)
     {
-        // Log the year input for debugging
-        Log::info('Year input: ' . $year);
-
         // Fetch movies where the release_date year matches the input year
         $movies = Movie::whereYear('release_date', $year)->get();
-
-        // Log the count of movies found
-        Log::info('Movies found: ' . $movies->count());
 
         // Check if movies collection is empty
         if ($movies->isEmpty()) {
@@ -330,13 +422,11 @@ class MovieController extends MainController
         // Create a resource collection of the found movies
         $res = new MovieResourceCollection($movies);
 
-        // Log the success response
-        Log::info('Success response: Movies from this year found');
-
         // Return the success response
-        return $this->sendSuccess(200, 'Movies from this year found', $movies);
+        return $this->sendSuccess(200, 'Movies from this year found', $res);
     }
 
+    //Suggestions
     public function suggestMovies(Request $request)
     {
         $request->validate([
@@ -381,7 +471,7 @@ class MovieController extends MainController
         ], 200);
     }
 
-
+    //Related
     public function related($id)
     {
         $movie = Movie::find($id);
@@ -415,7 +505,7 @@ class MovieController extends MainController
         ], 200);
     }
 
-
+    //Search
     public function search(Request $request)
     {
         $query = $request->input('query');
@@ -431,7 +521,7 @@ class MovieController extends MainController
         return $this->sendSuccess(200, 'Movies found', $res);
     }
 
-
+    //Filter
     public function filter(Request $request)
     {
         // Validate the search request

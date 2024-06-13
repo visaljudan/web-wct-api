@@ -13,9 +13,8 @@ class RequestedMovie extends Model
         'user_id',
         'title',
         'description',
-        'image_path',
         'url',
-        'status',
+        'status',   
     ];
 
     public function user()

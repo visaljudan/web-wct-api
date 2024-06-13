@@ -59,25 +59,49 @@ class ArtistController extends MainController
      */
     public function store(Request $request)
     {
+        // Validate the request data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'profile_image_file' => 'nullable|required_without:profile_image_url|image|mimes:jpeg,png,jpg,gif,svg',
+            'profile_image_file' => 'nullable|required_without:profile_image_url|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as per your requirements
             'profile_image_url' => 'nullable|required_without:profile_image_file|string|url',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
+        // Check user permissions
         if (!Gate::allows('admin', User::class)) {
             return $this->sendError(403, 'You are not allowed');
         }
 
-        $artist = Artist::create($request->all());
+        try {
+            $profile_image = null;
+            // Handle profile image file upload
+            if ($request->hasFile('profile_image_file')) {
+                $profileImageFile = $request->file('profile_image_file');
+                $profileImagePath = $profileImageFile->store('img'); // Store in 'img' directory
+                $profile_image = env('AWS_CLOUDFRONT_URL') . '/' . $profileImagePath; // Example CloudFront URL
+            } else {
+                $profile_image = $request->profile_image_url;
+            }
 
-        $res = new ArtistResource($artist);
-        return $this->sendSuccess(200, 'Artist created successfully', $res);
+            // Create the artist record
+            $artist = Artist::create([
+                'name' => $request->name,
+                'profile_image' => $profile_image,
+            ]);
+
+            // Return a success response
+            $res = new ArtistResource($artist);
+            return $this->sendSuccess(200, 'Artist created successfully', $res);
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return $this->sendError(500, 'Failed to store artist');
+        }
     }
+
     /**
      * @OA\Get(
      *     path="/api/artists/{id}",
@@ -148,27 +172,50 @@ class ArtistController extends MainController
             return $this->sendError(404, 'Artist not found');
         }
 
+        // Validate the request data
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'profile_image_file' => 'nullable|required_without:profile_image_url|image|mimes:jpeg,png,jpg,gif,svg',
-            'profile_image_url' => 'nullable|required_without:profile_image_file|string|url',
+            'profile_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Adjust max size as per your requirements
+            'profile_image_url' => 'nullable|string|url',
         ]);
 
+        // Check if validation fails
         if ($validator->fails()) {
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
+        // Check user permissions
         if (!Gate::allows('admin', User::class)) {
             return $this->sendError(403, 'You are not allowed');
         }
 
-        $artist->name  = $request->name;
-        $artist->profile_image_file = $request->profile_image_file;
-        $artist->profile_image_url = $request->profile_image_url;
-        $artist->save();
+        try {
 
-        $res = new ArtistResource($artist);
-        return $this->sendSuccess(200, 'Artist updated successfully', $res);
+
+            // Handle profile image file upload if provided
+            if ($request->hasFile('profile_image_file')) {
+                $profileImageFile = $request->file('profile_image_file');
+                $profileImagePath = $profileImageFile->store('img'); // Store in 'img' directory
+                $profile_image = env('AWS_CLOUDFRONT_URL') . '/' . $profileImagePath; // Example CloudFront URL
+                $artist->profile_image = $profile_image;
+            } elseif ($request->has('profile_image_url')) {
+                // Update profile image URL if provided
+                $artist->profile_image = $request->profile_image_url;
+            }
+
+            // Update other fields
+            $artist->name = $request->name;
+
+            // Save the updated artist record
+            $artist->save();
+
+            // Return a success response
+            $res = new ArtistResource($artist);
+            return $this->sendSuccess(200, 'Artist updated successfully', $res);
+        } catch (\Exception $e) {
+            // Handle any exceptions
+            return $this->sendError(500, 'Failed to update artist');
+        }
     }
     /**
      * @OA\Delete(

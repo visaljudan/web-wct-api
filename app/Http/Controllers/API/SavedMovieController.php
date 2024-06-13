@@ -38,6 +38,8 @@ class SavedMovieController extends MainController
             return $this->sendError(404, 'No Records Found');
         }
 
+        $savedMovies = SavedMovie::with('movie')->get();
+
         // Return a success response with the saved movies
         $res = new SavedMovieResourceCollection($savedMovies);
         return $this->sendSuccess(200, 'Saved Movies Found', $res);

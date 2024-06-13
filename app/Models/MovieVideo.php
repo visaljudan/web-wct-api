@@ -10,12 +10,17 @@ class MovieVideo extends Model
     use HasFactory;
     protected $fillable = [
         'movie_id',
+        // 'video_file',
+        // 'video_url',
+        'video',
+        'season_number',
+        'episode_number',
+        'part_number',
         'type',
-        'offical',
+        'official',
         'subscription',
         'subscription_start_date',
         'subscription_end_date',
-        'video_path',
     ];
 
     public function movie()

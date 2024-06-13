@@ -15,6 +15,7 @@ use App\Http\Controllers\API\MovieSerieController;
 use App\Http\Controllers\API\MovieSubscriptionController;
 use App\Http\Controllers\API\MovieVideoController;
 use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\RatedMovieController;
 use App\Http\Controllers\API\RequestedMovieController;
 use App\Http\Controllers\API\RequestedMovieResponseController;
@@ -24,6 +25,8 @@ use App\Http\Controllers\API\SubscriptionPlanController;
 use App\Http\Controllers\API\TVShowController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\YearController;
+
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -124,54 +127,45 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     //Payments
     Route::get('/payments', [PaymentController::class, 'index']);
     Route::post('/payments', [PaymentController::class, 'store']);
-    Route::get('/payments/{id}', [PaymentController::class, 'show']);
+    Route::get('/payments/success', [PaymentController::class, 'show']);
     Route::delete('/payments/{id}', [PaymentController::class, 'destroy']);
-    Route::post('/charge', [PaymentController::class, 'charge']);
 
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
+    //Requested Movies
+    Route::get('/requested_movies', [RequestedMovieController::class, 'index']);
+    Route::post('/requested_movies', [RequestedMovieController::class, 'store']);
+    Route::get('/requested_movies/{id}', [RequestedMovieController::class, 'show']);
+    Route::put('/requested_movies/{id}', [RequestedMovieController::class, 'update']);
+    Route::delete('/requested_movies/{id}', [RequestedMovieController::class, 'destroy']);
+
+    //Requested Movie Responses
+    Route::get('/requested_movie_responses', [RequestedMovieResponseController::class, 'index']);
+    Route::post('/requested_movie_responses', [RequestedMovieResponseController::class, 'store']);
+    Route::get('/requested_movie_responses/{id}', [RequestedMovieResponseController::class, 'show']);
+    Route::put('/requested_movie_responses/{id}', [RequestedMovieResponseController::class, 'update']);
+    Route::delete('/requested_movie_responses/{id}', [RequestedMovieResponseController::class, 'destroy']);
 
     //Movie
     Route::post('/movies', [MovieController::class, 'store']);
     Route::put('/movies/{id}', [MovieController::class, 'update']);
     Route::delete('/movies/{id}', [MovieController::class, 'destroy']);
 
-    //Movie Series 
-    Route::post('movie_series', [MovieSerieController::class, 'store']);
-    Route::put('movie_series/{id}', [MovieSerieController::class, 'update']);
-    Route::delete('movie_series/{id}', [MovieSerieController::class, 'destroy']);
-
     //Movie Videos
+    Route::post('movie_videos', [MovieVideoController::class, 'store']);
     Route::put('movie_videos/{id}', [MovieVideoController::class, 'update']);
     Route::delete('movie_videos/{id}', [MovieVideoController::class, 'destroy']);
 
-    //Requested Movies
-    Route::get('requested-movies', [RequestedMovieController::class, 'index']);
-    Route::post('requested-movies', [RequestedMovieController::class, 'store']);
-    Route::get('requested-movies/{id}', [RequestedMovieController::class, 'show']);
-    Route::put('requested-movies/{id}', [RequestedMovieController::class, 'update']);
-    Route::delete('requested-movies/{id}', [RequestedMovieController::class, 'destroy']);
-
-    //Requested Movie Responses
-    Route::get('requested-movie-responses', [RequestedMovieResponseController::class, 'index']);
-    Route::post('requested-movie-responses', [RequestedMovieResponseController::class, 'store']);
-    Route::get('requested-movie-responses/{id}', [RequestedMovieResponseController::class, 'show']);
-    Route::put('requested-movie-responses/{id}', [RequestedMovieResponseController::class, 'update']);
-    Route::delete('requested-movie-responses/{id}', [RequestedMovieResponseController::class, 'destroy']);
+    Route::post('/post', [PostController::class, 'store']);
 
 
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
 
-    // //Movie Subscriptions 
-    // Route::get('/movie_subscriptions', [MovieSubscriptionController::class, 'index']);
-    // Route::post('/movie-subscription_plans', [MovieSubscriptionController::class, 'store']);
-    // Route::get('/movie-subscriptions/{id}', [MovieSubscriptionController::class, 'show']);
-    // Route::put('/movie-subscriptions/{id}', [MovieSubscriptionController::class, 'update']);
-    // Route::delete('/movie-subscriptions/{id}', [MovieSubscriptionController::class, 'destroy']);
+
 });
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
@@ -247,16 +241,6 @@ Route::middleware('api')->group(function () {
     Route::get('movie_photos/{id}', [MoviePhotoController::class, 'show']);
     Route::get('/movie_photos/{movieId}/photos', [MoviePhotoController::class, 'movieIdPhoto']);
 
-
-
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-    ///////////////////////////Not Done Yet/////////////////////////////////////
-
     //Movies
     Route::get('/movies', [MovieController::class, 'index']);
     Route::get('/latest', [MovieController::class, 'latest']);
@@ -264,16 +248,21 @@ Route::middleware('api')->group(function () {
     Route::get('/top_rated', [MovieController::class, 'topRated']);
     Route::get('/movies/{id}', [MovieController::class, 'show']);
     Route::get('/movies/tv_shows/{tvShowId}', [MovieController::class, 'tvShow']);
-    Route::get('/movies/year/{year}', [MovieController::class, 'year']);
+    Route::get('/movies/years/{year}', [MovieController::class, 'year']);
     Route::get('/movies/search/title', [MovieController::class, 'search']);
     Route::get('/movies/filter/movie', [MovieController::class, 'filter']);
 
-    //Movie Series
-    Route::get('movie_series', [MovieSerieController::class, 'index']);
-    Route::get('movie_series/{id}', [MovieSerieController::class, 'show']);
+
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
+    ///////////////////////////Not Done Yet/////////////////////////////////////
 
     //Movie Videos
     Route::get('movie_videos', [MovieVideoController::class, 'index']);
     Route::get('movie_videos/{id}', [MovieVideoController::class, 'show']);
-    Route::post('movie_videos', [MovieVideoController::class, 'store']);
+    Route::get('/movie_videos/{movieId}/trailer', [MovieVideoController::class, 'movieIdTrailer']);
 });
