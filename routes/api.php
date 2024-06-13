@@ -148,6 +148,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/movies', [MovieController::class, 'store']);
     Route::put('/movies/{id}', [MovieController::class, 'update']);
     Route::delete('/movies/{id}', [MovieController::class, 'destroy']);
+    Route::post('/movies', [MovieController::class, 'store']);
 
     //Movie Videos
     Route::post('movie_videos', [MovieVideoController::class, 'store']);

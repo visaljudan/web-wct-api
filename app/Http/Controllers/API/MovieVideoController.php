@@ -41,24 +41,48 @@ class MovieVideoController extends MainController
      * @OA\Post(
      *     path="/api/movie-videos",
      *     tags={"Movie-Videos"},
-     *     summary="movie-videos",
-     *     description="'movie-videos",
-     *     operationId="'Movie-Videos",
+     *     summary="Create a new movie video",
+     *     description="Create a new movie video with either a file upload or a URL.",
+     *     operationId="createMovieVideo",
      *     @OA\RequestBody(
      *          required=true,
-     *          description="form movie-videos",
+     *          description="Movie video data",
      *          @OA\JsonContent(
-     *            required={"movie_id", "title", "video"},
+     *              required={"movie_id", "type", "official", "subscription"},
      *              @OA\Property(property="movie_id", type="string"),
-     *              @OA\Property(property="title", type="string"),
-     *              @OA\Property(property="video", type="string"),
+     *              @OA\Property(property="video_file", type="string", format="binary", nullable=true),
+     *              @OA\Property(property="video_url", type="string", nullable=true),
+     *              @OA\Property(property="season_number", type="integer", nullable=true),
+     *              @OA\Property(property="episode_number", type="integer", nullable=true),
+     *              @OA\Property(property="part_number", type="integer", nullable=true),
+     *              @OA\Property(property="type", type="string", enum={"movie", "trailer"}),
+     *              @OA\Property(property="official", type="boolean"),
+     *              @OA\Property(property="subscription", type="boolean"),
+     *              @OA\Property(property="subscription_start_date", type="string", format="date", nullable=true),
+     *              @OA\Property(property="subscription_end_date", type="string", format="date", nullable=true),
      *          ),
      *      ),
      *     @OA\Response(
-     *         response="default",
-     *         description=""
-     *        
-     *     )
+     *         response="201",
+     *         description="Movie video created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/MovieVideoResource")
+     *     ),
+     *     @OA\Response(
+     *         response="422",
+     *         description="Validation failed",
+     *         @OA\JsonContent(ref="#/components/schemas/Error")
+     *     ),
+     *     @OA\Response(
+     *         response="403",
+     *         description="Forbidden",
+     *         @OA\JsonContent(ref="#/components/schemas/Error")
+     *     ),
+     *     @OA\Response(
+     *         response="500",
+     *         description="Internal server error",
+     *         @OA\JsonContent(ref="#/components/schemas/Error")
+     *     ),
+     *     security={{"Bearer":{}}}
      * )
      */
     public function store(Request $request)
