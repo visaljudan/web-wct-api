@@ -12,17 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class SavedMovieController extends MainController
 {
-     /**
-     * @OA\Get(
-     *     path="/api/saved_movies",
-     *     tags={"Saved-Movies"},
-     *     summary="Get List Artists Data",
-     *     description="enter your saved_movies here",
-     *     operationId="saved_movies",
-     *     @OA\Response(response="200", description="Success"),
-     *     security={{"Bearer":{}}}
-     * )
-     */
     public function index(Request $request)
     {
         // Get the token from the request header
@@ -58,7 +47,7 @@ class SavedMovieController extends MainController
 
     /**
      * @OA\Post(
-     *     path="/api/saved_movies",
+     *     path="/api/saved-movies",
      *     tags={"Saved-Movies"},
      *     summary="saved-movies",
      *     description="saved-movies",
@@ -72,15 +61,17 @@ class SavedMovieController extends MainController
      *              @OA\Property(property="movie_id", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(response="200", description="Success"),
-     *     security={{"Bearer":{}}}
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *        
+     *     )
      * )
      */
     public function store(Request $request)
     {
         // Validate request data
         $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
             'movie_id' => 'required|exists:movies,id',
         ]);
 
@@ -105,11 +96,6 @@ class SavedMovieController extends MainController
             return $this->sendError(401, 'Invalid token');
         }
 
-        // Check if the authenticated user is the same as the user_id in the request
-        if ($user->id !== $request->user_id) {
-            return $this->sendError(403, 'You are not allowed');
-        }
-
         // Check if the user has already saved this movie
         $existingSavedMovie = SavedMovie::where('user_id', $user->id)
             ->where('movie_id', $request->movie_id)
@@ -120,13 +106,15 @@ class SavedMovieController extends MainController
         }
 
         // Create a new saved movie
-        $savedMovie = SavedMovie::create($request->all());
+        $savedMovie = SavedMovie::create([
+            'user_id' => $user->id,
+            'movie_id' => $request->movie_id,
+        ]);
 
         // Return a success response
         $res = new SavedMovieResource($savedMovie);
         return $this->sendSuccess(201, 'Saved movie created successfully', $res);
     }
-
 
     /**
      * @OA\Get(
@@ -185,7 +173,7 @@ class SavedMovieController extends MainController
 
     /**
      * @OA\Put(
-     *     path="/api/saved_movies/{id}",
+     *     path="/api/saved-movies/{id}",
      *     tags={"Saved-Movies"},
      *     summary="Update saved-movies",
      *     description="-",
@@ -208,8 +196,10 @@ class SavedMovieController extends MainController
      *              @OA\Property(property="movie_id", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(response="200", description="Success"),
-     *     security={{"Bearer":{}}}
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
      * )
      */
     public function update(Request $request, $movieId)
@@ -278,7 +268,7 @@ class SavedMovieController extends MainController
 
     /**
      * @OA\Delete(
-     *     path="/api/saved_movies/{id}",
+     *     path="/api/saved-movies/{id}",
      *     tags={"Saved-Movies"},
      *     summary="Delete saved-movies",
      *     description="-",
@@ -292,8 +282,10 @@ class SavedMovieController extends MainController
      *              type="string"
      *          )
      *     ),
-     *    @OA\Response(response="200", description="Success"),
-     *     security={{"Bearer":{}}}
+     *     @OA\Response(
+     *         response="default",
+     *         description=""
+     *     )
      * )
      */
 
@@ -333,7 +325,7 @@ class SavedMovieController extends MainController
 
         // Delete the saved movie
         $savedMovie->delete();
-        
+
         // Return a success response
         return $this->sendSuccess(200, 'Saved movie deleted successfully');
     }

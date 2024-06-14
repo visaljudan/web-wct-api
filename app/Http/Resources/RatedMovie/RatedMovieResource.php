@@ -13,6 +13,7 @@ class RatedMovieResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'movie_id' => $this->movie_id,
+            'title' => $this->movie->title,
             'rated_value' => $this->rated_value,
         ];
     }

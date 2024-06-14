@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\MainController;
 use App\Http\Resources\Payment\PaymentResource;
 use App\Http\Resources\Payment\PaymentResourceCollection;
+use App\Http\Resources\User\UserResource;
 use App\Models\Payment;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
@@ -162,17 +163,20 @@ class PaymentController extends MainController
                     $user->save();
                 }
 
+
+
                 // Store subscription details in user_subscription table
                 UserSubscription::create([
                     'user_id' => $user->id,
-                    'payment_id' => $payment->id, // Add payment ID here
+                    'payment_id' => $payment->transaction_id, // Add payment ID here
                     'subscription_plan_id' => $request->subscription_plan_id,
                     'subscription_start_date' => now(),
                     'subscription_end_date' => now()->addDays($duration),
                     'subscription_status' => 'running',
                 ]);
 
-                $res = new PaymentResource($payment);
+
+                $res = new UserResource($user);
                 return $this->sendSuccess(200, 'Payment success', $res);
             } else {
                 return $this->sendError(500, 'Payment failed');

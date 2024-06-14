@@ -4,6 +4,7 @@ use App\Http\Controllers\API\ArtistController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\CountryController;
 use App\Http\Controllers\API\GenreController;
+use App\Http\Controllers\API\HistoriedMovieController;
 use App\Http\Controllers\API\LanguageController;
 use App\Http\Controllers\API\MovieArtistController;
 use App\Http\Controllers\API\MovieController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\API\SavedMovieController;
 use App\Http\Controllers\API\SubscriptionPlanController;
 use App\Http\Controllers\API\TVShowController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\UserSubscriptionController;
 use App\Http\Controllers\API\YearController;
 
 
@@ -118,11 +120,18 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::put('/saved_movies/{movieId}', [SavedMovieController::class, 'update']);
     Route::delete('/saved_movies/{movieId}', [SavedMovieController::class, 'destroy']);
 
+    //Historied Movies
+    Route::get('/historied_movies', [HistoriedMovieController::class, 'index']);
+    Route::post('/historied_movies', [HistoriedMovieController::class, 'store']);
+    Route::get('/historied_movies/{movieId}', [HistoriedMovieController::class, 'show']);
+    Route::put('/historied_movies/{movieId}', [HistoriedMovieController::class, 'update']);
+    Route::delete('/historied_movies/{movieId}', [HistoriedMovieController::class, 'destroy']);
+
     //Rated Movies
     Route::get('/rated_movies', [RatedMovieController::class, 'index']);
     Route::post('/rated_movies', [RatedMovieController::class, 'storeUpdate']);
-    Route::get('/rated_movies/{id}', [RatedMovieController::class, 'show']);
-    Route::delete('/rated_movies/{id}', [RatedMovieController::class, 'destroy']);
+    Route::get('/rated_movies/{movidId}', [RatedMovieController::class, 'show']);
+    Route::delete('/rated_movies/{movidId}', [RatedMovieController::class, 'destroy']);
 
     //Payments
     Route::get('/payments', [PaymentController::class, 'index']);
@@ -156,6 +165,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::delete('movie_videos/{id}', [MovieVideoController::class, 'destroy']);
 
     Route::post('/post', [PostController::class, 'store']);
+
+    //User Subscription
+    Route::get('/user_subscriptions', [UserSubscriptionController::class, 'show']);
 
 
     ///////////////////////////Not Done Yet/////////////////////////////////////

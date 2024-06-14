@@ -107,7 +107,7 @@ class RatedMovieController extends MainController
 
         $validator = Validator::make($request->all(), [
             'movie_id' => 'required|exists:movies,id',
-            'rated_value' => 'required|integer|between:0,5',
+            'rated_value' => 'required|integer|between:0,10',
         ]);
 
         if ($validator->fails()) {
@@ -131,7 +131,7 @@ class RatedMovieController extends MainController
 
             $validator = Validator::make($request->all(), [
                 'movie_id' => 'required|exists:movies,id',
-                'rated_value' => 'required|integer|between:1,5',
+                'rated_value' => 'required|integer|between:1,10',
             ]);
 
             if ($validator->fails()) {

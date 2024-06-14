@@ -5,8 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\MainController;
 use App\Http\Resources\HistoriedMovie\HistoriedMovieResource;
 use App\Http\Resources\HistoriedMovie\HistoriedMovieResourceCollection;
-use App\Http\Resources\HistoriedMovieResourceCollection as ResourcesHistoriedMovieResourceCollection;
 use App\Models\HistoriedMovie;
+use App\Models\Movie;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,8 +17,8 @@ class HistoriedMovieController extends MainController
      * @OA\Get(
      *     path="/api/historied_movies",
      *     tags={"Historied-Movies"},
-     *     summary="Get List Historied Movies",
-     *     description="Get a list of historied movies for the authenticated user.",
+     *     summary="Get List Artists Data",
+     *     description="enter your historied_movies here",
      *     operationId="historied_movies",
      *     @OA\Response(response="200", description="Success"),
      *     security={{"Bearer":{}}}
@@ -26,16 +26,34 @@ class HistoriedMovieController extends MainController
      */
     public function index(Request $request)
     {
-        $user = $request->user();
+        // Get the token from the request header
+        $token = $request->header('Authorization');
 
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Retrieve historied movies for the authenticated user
         $historiedMovies = HistoriedMovie::where('user_id', $user->id)->get();
 
         if ($historiedMovies->isEmpty()) {
-            return $this->sendError(404, 'No Historied Movies Found');
+            return $this->sendError(404, 'No Records Found');
         }
 
-        $res = new ResourcesHistoriedMovieResourceCollection($historiedMovies);
+        $historiedMovies = HistoriedMovie::with('movie')->get();
 
+        // Return a success response with the historied movies
+        $res = new HistoriedMovieResourceCollection($historiedMovies);
         return $this->sendSuccess(200, 'Historied Movies Found', $res);
     }
 
@@ -43,24 +61,25 @@ class HistoriedMovieController extends MainController
      * @OA\Post(
      *     path="/api/historied_movies",
      *     tags={"Historied-Movies"},
-     *     summary="Save a Historied Movie",
-     *     description="Save a movie as historied for the authenticated user.",
-     *     operationId="save_historied_movie",
+     *     summary="historied-movies",
+     *     description="historied-movies",
+     *     operationId="Historied-Movies",
      *     @OA\RequestBody(
      *          required=true,
-     *          description="Historied movie data",
+     *          description="form historied-movies",
      *          @OA\JsonContent(
      *            required={"user_id", "movie_id"},
      *              @OA\Property(property="user_id", type="string"),
      *              @OA\Property(property="movie_id", type="string"),
      *          ),
      *      ),
-     *     @OA\Response(response="201", description="Success"),
+     *     @OA\Response(response="200", description="Success"),
      *     security={{"Bearer":{}}}
      * )
      */
     public function store(Request $request)
     {
+        // Validate request data
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'movie_id' => 'required|exists:movies,id',
@@ -70,47 +89,98 @@ class HistoriedMovieController extends MainController
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
-        $user = $request->user();
+        // Get the token from the request header
+        $token = $request->header('Authorization');
 
-        // Check if the user has already marked this movie as historied
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Check if the authenticated user is the same as the user_id in the request
+        if ($user->id !== $request->user_id) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
+        // Check if the user has already historied this movie
         $existingHistoriedMovie = HistoriedMovie::where('user_id', $user->id)
             ->where('movie_id', $request->movie_id)
             ->first();
 
         if ($existingHistoriedMovie) {
-            return $this->sendError(409, 'Movie already marked as historied by the user');
+            return $this->sendError(409, 'Movie already historied by the user');
         }
 
+        // Create a new historied movie
         $historiedMovie = HistoriedMovie::create($request->all());
 
-        return $this->sendSuccess(201, 'Movie marked as historied successfully', new HistoriedMovieResource($historiedMovie));
+        // Increment the popularity of the associated movie
+        $movie = Movie::find($request->movie_id);
+        if ($movie) {
+            $movie->popularity += 1;
+            $movie->save();
+        }
+
+        // Return a success response
+        $res = new HistoriedMovieResource($historiedMovie);
+        return $this->sendSuccess(201, 'Historied movie created successfully', $res);
     }
+
+
 
     /**
      * @OA\Get(
-     *     path="/api/historied_movies/{id}",
+     *     path="/api/historied-movies/{id}",
      *     tags={"Historied-Movies"},
-     *     summary="Get a Historied Movie by ID",
-     *     description="Get details of a specific historied movie for the authenticated user.",
-     *     operationId="get_historied_movie_by_id",
+     *     summary="Detail",
+     *     description="-",
+     *     operationId="historied-movies/GetById",
      *     @OA\Parameter(
      *          name="id",
-     *          description="Historied Movie ID",
+     *          description="Id",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
      *              type="string"
      *          )
      *     ),
-     *     @OA\Response(response="200", description="Success"),
-     *     security={{"Bearer":{}}}
+     *     @OA\Response(
+     *         response="default",
+     *         description="return model admin"
+     *     )
      * )
      */
-    public function show(Request $request, $id)
-    {
-        $user = $request->user();
 
-        $historiedMovie = HistoriedMovie::where('id', $id)
+    public function show(Request $request, $movieId)
+    {
+        // Get the token from the request header
+        $token = $request->header('Authorization');
+
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Retrieve the specific historied movie for the authenticated user with the specified movie_id
+        $historiedMovie = HistoriedMovie::where('movie_id', $movieId)
             ->where('user_id', $user->id)
             ->first();
 
@@ -118,19 +188,20 @@ class HistoriedMovieController extends MainController
             return $this->sendError(404, 'Historied movie not found');
         }
 
-        return $this->sendSuccess(200, 'Historied Movie Found', new HistoriedMovieResource($historiedMovie));
+        $res = new HistoriedMovieResource($historiedMovie);
+        return $this->sendSuccess(200, 'Historied Movie found', $res);
     }
 
     /**
      * @OA\Put(
      *     path="/api/historied_movies/{id}",
      *     tags={"Historied-Movies"},
-     *     summary="Update a Historied Movie",
-     *     description="Update details of a specific historied movie for the authenticated user.",
-     *     operationId="update_historied_movie",
+     *     summary="Update historied-movies",
+     *     description="-",
+     *     operationId="historied-movies/update",
      *     @OA\Parameter(
      *          name="id",
-     *          description="Historied Movie ID",
+     *          description="Id",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
@@ -139,7 +210,7 @@ class HistoriedMovieController extends MainController
      *     ),
      *     @OA\RequestBody(
      *          required=true,
-     *          description="Updated historied movie data",
+     *          description="form admin",
      *          @OA\JsonContent(
      *             required={"user_id", "movie_id"},
      *              @OA\Property(property="user_id", type="string"),
@@ -150,8 +221,9 @@ class HistoriedMovieController extends MainController
      *     security={{"Bearer":{}}}
      * )
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $movieId)
     {
+        // Validate request data
         $validator = Validator::make($request->all(), [
             'user_id' => 'required|exists:users,id',
             'movie_id' => 'required|exists:movies,id',
@@ -161,9 +233,29 @@ class HistoriedMovieController extends MainController
             return $this->sendError(422, 'Validation failed', $validator->errors());
         }
 
-        $user = $request->user();
+        // Get the token from the request header
+        $token = $request->header('Authorization');
 
-        $historiedMovie = HistoriedMovie::where('id', $id)
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Check if the authenticated user is the same as the user_id in the request
+        if ($user->id !== $request->user_id) {
+            return $this->sendError(403, 'You are not allowed');
+        }
+
+        $historiedMovie = HistoriedMovie::where('movie_id', $movieId)
             ->where('user_id', $user->id)
             ->first();
 
@@ -171,21 +263,38 @@ class HistoriedMovieController extends MainController
             return $this->sendError(404, 'Historied movie not found');
         }
 
+        // Check if the authenticated user is the owner of the historied movie
+        if ($user->id !== $historiedMovie->user_id) {
+            return $this->sendError(403, 'You are not allowed to perform this action');
+        }
+
+        // Validate request data again for specific fields if needed
+        $validator = Validator::make($request->all(), [
+            // Add validation rules for specific fields if needed
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError(422, 'Validation failed', $validator->errors());
+        }
+
+        // Update the historied movie
         $historiedMovie->update($request->all());
 
-        return $this->sendSuccess(200, 'Historied movie updated successfully', new HistoriedMovieResource($historiedMovie));
+        // Return a success response
+        $res = new HistoriedMovieResource($historiedMovie);
+        return $this->sendSuccess(200, 'Historied movie updated successfully', $res);
     }
 
     /**
      * @OA\Delete(
      *     path="/api/historied_movies/{id}",
      *     tags={"Historied-Movies"},
-     *     summary="Delete a Historied Movie",
-     *     description="Delete a specific historied movie for the authenticated user.",
-     *     operationId="delete_historied_movie",
+     *     summary="Delete historied-movies",
+     *     description="-",
+     *     operationId="historied-movies/delete",
      *     @OA\Parameter(
      *          name="id",
-     *          description="Historied Movie ID",
+     *          description="Id",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
@@ -196,20 +305,45 @@ class HistoriedMovieController extends MainController
      *     security={{"Bearer":{}}}
      * )
      */
-    public function destroy(Request $request, $id)
-    {
-        $user = $request->user();
 
-        $historiedMovie = HistoriedMovie::where('id', $id)
+    public function destroy(Request $request, $movieId)
+    {
+        // Get the token from the request header
+        $token = $request->header('Authorization');
+
+        if (!$token) {
+            return $this->sendError(401, 'Token is missing in the request header');
+        }
+
+        // Remove "Bearer " prefix from the token
+        $tokenValue = str_replace('Bearer ', '', $token);
+
+        // Find the user associated with the token
+        $user = User::where('api_token', $tokenValue)->first();
+
+        if (!$user) {
+            return $this->sendError(401, 'Invalid token');
+        }
+
+        // Find the historied movie by ID
+        $historiedMovie = HistoriedMovie::where('movie_id', $movieId)
             ->where('user_id', $user->id)
             ->first();
+
 
         if (!$historiedMovie) {
             return $this->sendError(404, 'Historied movie not found');
         }
 
+        // Check if the authenticated user is the owner of the historied movie
+        if ($user->id !== $historiedMovie->user_id) {
+            return $this->sendError(403, 'You are not allowed to perform this action');
+        }
+
+        // Delete the historied movie
         $historiedMovie->delete();
 
+        // Return a success response
         return $this->sendSuccess(200, 'Historied movie deleted successfully');
     }
 }
