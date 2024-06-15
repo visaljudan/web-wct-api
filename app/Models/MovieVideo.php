@@ -19,7 +19,7 @@ class MovieVideo extends Model
         'type',
         'official',
         'subscription',
-        'subscription_start_date',
+        'subscription_start_da  te',
         'subscription_end_date',
     ];
 

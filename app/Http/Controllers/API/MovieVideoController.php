@@ -151,17 +151,63 @@ class MovieVideoController extends MainController
      *     )
      * )
      */
-    public function show($id)
+    public function show(Request $request, $movie_id)
     {
-        $movieVideo = MovieVideo::find($id);
+        // Get the token from the request header
+        $token = $request->header('Authorization');
 
-        if (!$movieVideo) {
-            return $this->sendError(404, 'Movie video not found');
+        if ($token) {
+            // Remove "Bearer " prefix from the token
+            $tokenValue = str_replace('Bearer ', '', $token);
+
+            // Find the user associated with the token
+            $user = User::where('api_token', $tokenValue)->first();
+
+            if (!$user) {
+                return $this->sendError(401, 'Invalid token');
+            }
+        } else {
+            $user = null; // No token means guest access
         }
 
-        $res = new MovieVideoResource($movieVideo);
-        return $this->sendSuccess(200, 'Movie video found', $res);
+        // Find the movie video by movie_id
+        $movieVideos = MovieVideo::where('movie_id', $movie_id)->get();
+
+        if ($movieVideos->isEmpty()) {
+            return $this->sendError(404, 'Movie videos not found');
+        }
+
+        // Access control logic
+        if (!$user) {
+            // Guests can only access trailers
+            $filteredVideos = $movieVideos->filter(function ($video) {
+                return $video->type === 'trailer';
+            });
+        } else {
+            // User is authenticated
+            if ($user->role === 'User') {
+                // Users with role 'User' can access all videos, but only if subscription is false
+                $filteredVideos = $movieVideos->filter(function ($video) {
+                    return !$video->subscription;
+                });
+            } elseif ($user->role === 'User Subscription' || $user->role === 'Admin') {
+                // Users with role 'UserSubscription' or 'Admin' can access all videos
+                $filteredVideos = $movieVideos;
+            } else {
+                return $this->sendError(403, 'Access denied');
+            }
+        }
+
+        if ($filteredVideos->isEmpty()) {
+            return $this->sendError(403, 'No accessible videos found');
+        }
+
+        // Return the movie video resource
+        $res = MovieVideoResource::collection($filteredVideos);
+        return $this->sendSuccess(200, 'Movie videos found', $res);
     }
+
+
     /**
      * @OA\Put(
      *     path="/api/movie-videos/{id}",
